@@ -37,6 +37,10 @@ server e non usa cookie, tracker o risorse esterne. Template e preferenze restan
   (licenza MIT), incluso come `qr-code-styling.js`.
 - Il resto del codice è distribuito con licenza **GNU GPL v3**: vedi [LICENSE](LICENSE).
 
+## Sostienimi
+
+Se lo strumento ti è utile, puoi [offrirmi un caffè ☕](https://buymeacoffee.com/gifwebsolutions).
+
 ## Contatti
 
 GIF Web Solutions — **gifwebsolutions (chiocciola) gmail.com**
