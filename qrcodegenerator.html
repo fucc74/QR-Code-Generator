@@ -1,0 +1,1644 @@
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generatore QR Code Professionale</title>
+    <script src="qr-code-styling.js"></script>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px 20px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+        
+        input[type="text"],
+        input[type="url"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        input[type="datetime-local"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+        
+        .color-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .color-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        input[type="color"] {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        select {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            background: white;
+            width: 100%;
+        }
+        
+        .preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 400px;
+        }
+        
+        #canvas {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 100%;
+        }
+        
+        #canvas canvas {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-secondary {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .btn-tertiary {
+            background: #ed8936;
+            color: white;
+        }
+        
+        .btn-copy {
+            background: #9f7aea;
+            color: white;
+        }
+        
+        .size-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .adsense-container {
+            margin-top: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 100px;
+        }
+
+        .adsense-container ins {
+            display: block;
+        }
+        
+        .type-section {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+
+        small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.8em;
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+        
+        .color-gradient-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        input[type="file"] {
+            padding: 10px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f8f9fa;
+            font-size: 14px;
+        }
+
+        input[type="file"]:hover {
+            border-color: #667eea;
+        }
+
+        input[type="range"] {
+            width: 70%;
+            margin-right: 10px;
+        }
+
+        #logoPreview {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        /* RESPONSIVE MOBILE */
+        @media (max-width: 968px) {
+            body {
+                padding: 5px;
+            }
+            
+            header {
+                padding: 15px 10px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .subtitle {
+                font-size: 0.85em;
+            }
+            
+            .content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px 15px;
+            }
+            
+            .color-gradient-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .preview {
+                padding: 15px;
+                min-height: auto;
+            }
+            
+            #canvas {
+                padding: 10px;
+            }
+            
+            .buttons {
+                gap: 5px;
+                width: 100%;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 13px;
+                flex: 1;
+                min-width: 80px;
+            }
+            
+            .btn-primary {
+                padding: 12px 20px;
+            }
+            
+            input[type="color"] {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .adsense-container {
+                padding: 10px;
+            }
+            
+            input[type="range"] {
+                width: 60%;
+            }
+            
+            .size-group {
+                gap: 8px;
+            }
+            
+            input[type="text"],
+            input[type="url"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="number"],
+            input[type="datetime-local"],
+            textarea,
+            select {
+                font-size: 16px; /* Evita zoom automatico su iOS */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.3em;
+            }
+            
+            .container {
+                border-radius: 10px;
+            }
+            
+            .content {
+                padding: 15px 10px;
+            }
+            
+            .buttons button {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 QR Code Generator</h1>
+            <p class="subtitle">Crea QR Code personalizzati in pochi click</p>
+        </header>
+        
+        <div class="content">
+            <div class="controls">
+ <div class="form-group">
+    <label for="qrType">🎯 Tipo di QR Code</label>
+    <select id="qrType" onchange="changeQRType()">
+        <option value="url">🌐 URL / Link</option>
+        <option value="text">📝 Testo Libero</option>
+        <option value="email">✉️ Email</option>
+        <option value="phone">📱 Telefono</option>
+        <option value="sms">💬 SMS</option>
+        <option value="whatsapp">💚 WhatsApp</option>
+        <option value="wifi">📶 WiFi</option>
+        <option value="vcard">👤 vCard (Contatto)</option>
+        <option value="event">📅 Evento/Calendario</option>
+        <option value="bitcoin">₿ Bitcoin</option>
+        <option value="appstore">📱 App Store</option>
+        <option value="instagram">📷 Instagram</option>
+        <option value="tiktok">🎵 TikTok</option>
+        <option value="linkedin">💼 LinkedIn</option>
+        <option value="twitter">🐦 Twitter/X</option>
+        <option value="gps">📍 Coordinate GPS</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="presetSelect">🎨 Template Stile</label>
+    <select id="presetSelect" onchange="applyPreset()">
+        <option value="">-- Personalizzato --</option>
+        <option value="classic">🔵 Classico Blu</option>
+        <option value="elegant">⚫ Elegante Nero</option>
+        <option value="neon">💜 Neon Viola</option>
+        <option value="sunset">🌅 Tramonto</option>
+        <option value="ocean">🌊 Oceano</option>
+        <option value="forest">🌲 Foresta</option>
+        <option value="rose">🌹 Rosa Gold</option>
+        <option value="minimal">⚪ Minimal</option>
+    </select>
+    <button type="button" onclick="savePreset()" style="margin-top: 10px; padding: 10px 20px; background: #48bb78; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%;">
+        💾 Salva Configurazione Corrente
+    </button>
+</div>
+
+
+
+
+                <!-- URL -->
+                <div id="type-url" class="type-section">
+                    <div class="form-group">
+                        <label for="url">🔗 URL</label>
+                        <input type="url" id="url" placeholder="https://tuosito.com" value="https://tuosito.com">
+                    </div>
+                </div>
+
+                <!-- Testo Libero -->
+                <div id="type-text" class="type-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="text">📝 Testo</label>
+                        <textarea id="text" placeholder="Inserisci il tuo testo..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div id="type-email" class="type-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="email">📧 Email</label>
+                        <input type="email" id="email" placeholder="info@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="emailSubject">Oggetto (opzionale)</label>
+                        <input type="text" id="emailSubject" placeholder="Oggetto email">
+                    </div>
+                    <div class="form-group">
+                        <label for="emailBody">Messaggio (opzionale)</label>
+                        <textarea id="emailBody" placeholder="Corpo del messaggio..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Telefono -->
+                <div id="type-phone" class="type-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="phone">📱 Numero di Telefono</label>
+                        <input type="tel" id="phone" placeholder="+39 123 456 7890">
+                    </div>
+                </div>
+
+                <!-- SMS -->
+                <div id="type-sms" class="type-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="smsPhone">📱 Numero di Telefono</label>
+                        <input type="tel" id="smsPhone" placeholder="+39 123 456 7890">
+                    </div>
+                    <div class="form-group">
+                        <label for="smsMessage">💬 Messaggio</label>
+                        <textarea id="smsMessage" placeholder="Testo SMS..."></textarea>
+                    </div>
+                </div>
+
+                <!-- WhatsApp -->
+                <div id="type-whatsapp" class="type-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="waPhone">📱 Numero WhatsApp</label>
+                        <input type="tel" id="waPhone" placeholder="393331234567">
+                        <small>Formato: 39 seguito dal numero (senza +, spazi o trattini)</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="waMessage">💬 Messaggio (opzionale)</label>
+                        <textarea id="waMessage" placeholder="Messaggio preimpostato..."></textarea>
+                    </div>
+                </div>
+
+                <!-- WiFi -->
+                <div id="type-wifi" class="type-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="wifiSSID">📶 Nome Rete (SSID)</label>
+                        <input type="text" id="wifiSSID" placeholder="Nome WiFi">
+                    </div>
+                    <div class="form-group">
+                        <label for="wifiPassword">🔒 Password</label>
+                        <input type="text" id="wifiPassword" placeholder="Password WiFi">
+                    </div>
+                    <div class="form-group">
+                        <label for="wifiEncryption">🔐 Tipo di Sicurezza</label>
+                        <select id="wifiEncryption">
+                            <option value="WPA">WPA/WPA2</option>
+                            <option value="WEP">WEP</option>
+                            <option value="nopass">Nessuna</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="wifiHidden"> Rete nascosta
+                        </label>
+                    </div>
+                </div>
+
+                <!-- vCard -->
+                <div id="type-vcard" class="type-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="vcardName">👤 Nome Completo</label>
+                        <input type="text" id="vcardName" placeholder="Mario Rossi">
+                    </div>
+                    <div class="form-group">
+                        <label for="vcardOrg">🏢 Azienda (opzionale)</label>
+                        <input type="text" id="vcardOrg" placeholder="Nome Azienda">
+                    </div>
+                    <div class="form-group">
+                        <label for="vcardTitle">💼 Ruolo (opzionale)</label>
+                        <input type="text" id="vcardTitle" placeholder="CEO, Developer, ecc.">
+                    </div>
+                    <div class="form-group">
+                        <label for="vcardPhone">📱 Telefono</label>
+                        <input type="tel" id="vcardPhone" placeholder="+39 123 456 7890">
+                    </div>
+                    <div class="form-group">
+                        <label for="vcardEmail">📧 Email</label>
+                        <input type="email" id="vcardEmail" placeholder="mario.rossi@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="vcardWebsite">🌐 Sito Web (opzionale)</label>
+                        <input type="url" id="vcardWebsite" placeholder="https://tuosito.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="vcardAddress">📍 Indirizzo (opzionale)</label>
+                        <textarea id="vcardAddress" placeholder="Via Example 123, Milano, Italia"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+ <!-- Evento/Calendario -->
+<div id="type-event" class="type-section" style="display: none;">
+    <div class="form-group">
+        <label for="eventTitle">📅 Titolo Evento</label>
+        <input type="text" id="eventTitle" placeholder="Nome dell'evento">
+    </div>
+    <div class="form-group">
+        <label for="eventLocation">📍 Luogo (opzionale)</label>
+        <input type="text" id="eventLocation" placeholder="Via Example 123, Milano">
+    </div>
+    <div class="form-group">
+        <label for="eventStart">🕐 Data e Ora Inizio</label>
+        <input type="datetime-local" id="eventStart">
+    </div>
+    <div class="form-group">
+        <label for="eventEnd">🕐 Data e Ora Fine</label>
+        <input type="datetime-local" id="eventEnd">
+    </div>
+    <div class="form-group">
+        <label for="eventDescription">📝 Descrizione (opzionale)</label>
+        <textarea id="eventDescription" placeholder="Dettagli dell'evento..."></textarea>
+    </div>
+</div>
+
+<!-- Bitcoin -->
+<div id="type-bitcoin" class="type-section" style="display: none;">
+    <div class="form-group">
+        <label for="btcAddress">₿ Indirizzo Bitcoin</label>
+        <input type="text" id="btcAddress" placeholder="bc1q...">
+    </div>
+    <div class="form-group">
+        <label for="btcAmount">💰 Importo (opzionale)</label>
+        <input type="number" id="btcAmount" step="0.00000001" placeholder="0.001">
+        <small>In BTC (es. 0.001)</small>
+    </div>
+    <div class="form-group">
+        <label for="btcLabel">🏷️ Etichetta (opzionale)</label>
+        <input type="text" id="btcLabel" placeholder="Donazione, Pagamento...">
+    </div>
+    <div class="form-group">
+        <label for="btcMessage">💬 Messaggio (opzionale)</label>
+        <input type="text" id="btcMessage" placeholder="Grazie per il supporto!">
+    </div>
+</div>
+
+
+
+<!-- Instagram -->
+<div id="type-instagram" class="type-section" style="display: none;">
+    <div class="form-group">
+        <label for="igUsername">📷 Username Instagram</label>
+        <input type="text" id="igUsername" placeholder="nomeutente">
+        <small>Senza @</small>
+    </div>
+</div>
+
+<!-- TikTok -->
+<div id="type-tiktok" class="type-section" style="display: none;">
+    <div class="form-group">
+        <label for="tiktokUsername">🎵 Username TikTok</label>
+        <input type="text" id="tiktokUsername" placeholder="@nomeutente">
+    </div>
+</div>
+
+<!-- LinkedIn -->
+<div id="type-linkedin" class="type-section" style="display: none;">
+    <div class="form-group">
+        <label for="linkedinType">💼 Tipo Profilo</label>
+        <select id="linkedinType">
+            <option value="profile">Profilo Personale</option>
+            <option value="company">Pagina Aziendale</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="linkedinUrl">🔗 URL LinkedIn</label>
+        <input type="text" id="linkedinUrl" placeholder="mario-rossi-123456">
+        <small>Solo la parte finale dell'URL (dopo linkedin.com/in/ o /company/)</small>
+    </div>
+</div>
+
+<!-- Twitter/X -->
+<div id="type-twitter" class="type-section" style="display: none;">
+    <div class="form-group">
+        <label for="twitterUsername">🐦 Username Twitter/X</label>
+        <input type="text" id="twitterUsername" placeholder="nomeutente">
+        <small>Senza @</small>
+    </div>
+</div>
+
+<!-- GPS -->
+<div id="type-gps" class="type-section" style="display: none;">
+    <div class="form-group">
+        <label for="gpsLat">🌍 Latitudine</label>
+        <input type="text" id="gpsLat" placeholder="45.4642">
+        <small>Esempio: 45.4642 (Milano)</small>
+    </div>
+    <div class="form-group">
+        <label for="gpsLng">🌍 Longitudine</label>
+        <input type="text" id="gpsLng" placeholder="9.1900">
+        <small>Esempio: 9.1900 (Milano)</small>
+    </div>
+    <div class="form-group">
+        <label for="gpsLabel">🏷️ Nome Luogo (opzionale)</label>
+        <input type="text" id="gpsLabel" placeholder="Duomo di Milano">
+    </div>
+</div>  
+  
+   
+<div class="form-group">
+    <label>🎨 Colori & Gradienti</label>
+    
+    <div class="color-gradient-row">
+        <!-- Dots -->
+        <div style="padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <label style="font-weight: 600; margin-bottom: 10px; display: block;">Dots</label>
+            <div class="form-group">
+                <label style="font-size: 0.85em;">
+                    <input type="radio" name="dotsColorType" value="solid" checked onchange="toggleGradient('dots')"> Solido
+                </label>
+                <label style="margin-left: 15px; font-size: 0.85em;">
+                    <input type="radio" name="dotsColorType" value="gradient" onchange="toggleGradient('dots')"> Gradiente
+                </label>
+            </div>
+            
+            <div id="dotsSolid">
+                <input type="color" id="dotsColor" value="#4267b2" style="margin-top: 10px; width: 100%;">
+            </div>
+            
+            <div id="dotsGradient" style="display: none;">
+                <div class="form-group">
+                    <select id="dotsGradientType" style="font-size: 14px; padding: 8px;">
+                        <option value="linear">Lineare</option>
+                        <option value="radial">Radiale</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <input type="color" id="dotsColor1" value="#667eea" style="flex: 1;">
+                    <input type="color" id="dotsColor2" value="#764ba2" style="flex: 1;">
+                </div>
+                <div class="form-group" id="dotsLinearOptions">
+                    <label style="font-size: 0.85em;">Rotazione</label>
+                    <input type="range" id="dotsRotation" min="0" max="360" value="0" step="15" style="width: 100%;">
+                    <span id="dotsRotationValue" style="font-size: 0.85em;">0°</span>
+                </div>
+            </div>
+        </div>
+        <!-- Background -->
+        <div style="padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <label style="font-weight: 600; margin-bottom: 10px; display: block;">Sfondo</label>
+            <div class="form-group">
+                <label style="font-size: 0.85em;">
+                    <input type="radio" name="bgColorType" value="solid" checked onchange="toggleGradient('bg')"> Solido
+                </label>
+                <label style="margin-left: 15px; font-size: 0.85em;">
+                    <input type="radio" name="bgColorType" value="gradient" onchange="toggleGradient('bg')"> Gradiente
+                </label>
+            </div>
+            
+            <div class="form-group" style="margin-top: 10px;">
+                <label style="font-size: 0.85em;">
+                    <input type="checkbox" id="transparentBg" onchange="toggleBackground()"> Trasparente
+                </label>
+            </div>
+            
+            <div id="bgSolid">
+                <input type="color" id="bgColor" value="#ffffff" style="margin-top: 10px; width: 100%;">
+            </div>
+            
+            <div id="bgGradient" style="display: none;">
+                <div class="form-group">
+                    <select id="bgGradientType" style="font-size: 14px; padding: 8px;">
+                        <option value="linear">Lineare</option>
+                        <option value="radial">Radiale</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <input type="color" id="bgColor1" value="#ffffff" style="flex: 1;">
+                    <input type="color" id="bgColor2" value="#f0f0f0" style="flex: 1;">
+                </div>
+                <div class="form-group" id="bgLinearOptions">
+                    <label style="font-size: 0.85em;">Rotazione</label>
+                    <input type="range" id="bgRotation" min="0" max="360" value="0" step="15" style="width: 100%;">
+                    <span id="bgRotationValue" style="font-size: 0.85em;">0°</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label>🔲 Colori Angoli</label>
+    <div class="form-group">
+        <label>
+            <input type="checkbox" id="customCornersColor" onchange="toggleCornersColor()"> Usa colori personalizzati per gli angoli
+        </label>
+    </div>
+    
+    <div id="cornersColorSection" style="display: none;">
+        <div class="color-gradient-row">
+            <!-- Corner Squares -->
+            <div style="padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <label style="font-weight: 600; margin-bottom: 10px; display: block;">Quadrati Angoli</label>
+                <div class="form-group">
+                    <label style="font-size: 0.85em;">
+                        <input type="radio" name="cornersSquareColorType" value="solid" checked onchange="toggleGradient('cornersSquare')"> Solido
+                    </label>
+                    <label style="margin-left: 15px; font-size: 0.85em;">
+                        <input type="radio" name="cornersSquareColorType" value="gradient" onchange="toggleGradient('cornersSquare')"> Gradiente
+                    </label>
+                </div>
+                
+                <div id="cornersSquareSolid">
+                    <input type="color" id="cornersSquareColor" value="#000000" style="margin-top: 10px; width: 100%;">
+                </div>
+                
+                <div id="cornersSquareGradient" style="display: none;">
+                    <div class="form-group">
+                        <select id="cornersSquareGradientType" style="font-size: 14px; padding: 8px;">
+                            <option value="linear">Lineare</option>
+                            <option value="radial">Radiale</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="color" id="cornersSquareColor1" value="#000000" style="flex: 1;">
+                        <input type="color" id="cornersSquareColor2" value="#666666" style="flex: 1;">
+                    </div>
+                    <div class="form-group" id="cornersSquareLinearOptions">
+                        <label style="font-size: 0.85em;">Rotazione</label>
+                        <input type="range" id="cornersSquareRotation" min="0" max="360" value="0" step="15" style="width: 100%;">
+                        <span id="cornersSquareRotationValue" style="font-size: 0.85em;">0°</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Corner Dots -->
+            <div style="padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <label style="font-weight: 600; margin-bottom: 10px; display: block;">Dots Angoli</label>
+                <div class="form-group">
+                    <label style="font-size: 0.85em;">
+                        <input type="radio" name="cornersDotColorType" value="solid" checked onchange="toggleGradient('cornersDot')"> Solido
+                    </label>
+                    <label style="margin-left: 15px; font-size: 0.85em;">
+                        <input type="radio" name="cornersDotColorType" value="gradient" onchange="toggleGradient('cornersDot')"> Gradiente
+                    </label>
+                </div>
+                
+                <div id="cornersDotSolid">
+                    <input type="color" id="cornersDotColor" value="#000000" style="margin-top: 10px; width: 100%;">
+                </div>
+                
+                <div id="cornersDotGradient" style="display: none;">
+                    <div class="form-group">
+                        <select id="cornersDotGradientType" style="font-size: 14px; padding: 8px;">
+                            <option value="linear">Lineare</option>
+                            <option value="radial">Radiale</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="color" id="cornersDotColor1" value="#000000" style="flex: 1;">
+                        <input type="color" id="cornersDotColor2" value="#666666" style="flex: 1;">
+                    </div>
+                    <div class="form-group" id="cornersDotLinearOptions">
+                        <label style="font-size: 0.85em;">Rotazione</label>
+                        <input type="range" id="cornersDotRotation" min="0" max="360" value="0" step="15" style="width: 100%;">
+                        <span id="cornersDotRotationValue" style="font-size: 0.85em;">0°</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+   
+   
+</div>
+ <div class="form-group">
+    <label for="logoUpload">🖼️ Logo/Immagine Centrale (opzionale)</label>
+    <input type="file" id="logoUpload" accept="image/*" onchange="handleLogoUpload(event)">
+    <small>Carica un'immagine PNG, JPG o SVG da inserire al centro</small>
+    <div id="logoPreview" style="margin-top: 10px; display: none;">
+        <img id="logoImg" style="max-width: 100px; border-radius: 8px; border: 2px solid #e0e0e0;">
+        <button type="button" onclick="removeLogo()" style="margin-left: 10px; padding: 8px 15px; background: #e53e3e; color: white; border: none; border-radius: 5px; cursor: pointer;">Rimuovi</button>
+    </div>
+</div>
+
+<div class="form-group" id="logoSettings" style="display: none;">
+    <label>⚙️ Impostazioni Logo</label>
+    <div class="form-group">
+        <label for="logoSize">Dimensione Logo (0.1 - 0.5)</label>
+        <input type="range" id="logoSize" min="0.1" max="0.5" step="0.05" value="0.4">
+        <span id="logoSizeValue">0.4</span>
+    </div>
+    <div class="form-group">
+        <label for="logoMargin">Margine Logo</label>
+        <input type="range" id="logoMargin" min="0" max="20" step="2" value="8">
+        <span id="logoMarginValue">8</span>
+    </div>
+    <div class="form-group">
+        <label>
+            <input type="checkbox" id="logoHideBackground" checked> Nascondi dots sotto il logo
+        </label>
+    </div>
+</div>               
+                <div class="form-group">
+                    <label for="dotsType">✨ Stile Dots</label>
+                    <select id="dotsType">
+                        <option value="rounded">Rounded</option>
+                        <option value="dots">Dots</option>
+                        <option value="classy">Classy</option>
+                        <option value="classy-rounded">Classy Rounded</option>
+                        <option value="square">Square</option>
+                        <option value="extra-rounded">Extra Rounded</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cornersType">🔲 Stile Angoli</label>
+                    <select id="cornersType">
+                        <option value="square">Square</option>
+                        <option value="extra-rounded">Extra Rounded</option>
+                        <option value="dot">Dot</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>📐 Dimensioni (px)</label>
+                    <div class="size-group">
+                        <input type="number" id="qrSize" value="400" min="100" max="2000" step="50">
+                        <input type="number" id="qrMargin" value="10" min="0" max="100" placeholder="Margine">
+                    </div>
+                </div>
+<div class="form-group">
+    <label for="errorLevel">🛡️ Livello Correzione Errori</label>
+    <select id="errorLevel">
+        <option value="L">L - Basso (7%)</option>
+        <option value="M">M - Medio (15%)</option>
+        <option value="Q" selected>Q - Alto (25%) - Consigliato</option>
+        <option value="H">H - Molto Alto (30%) - Per loghi grandi</option>
+    </select>
+    <small>Più alto = più robusto con loghi grandi, ma QR più denso</small>
+</div>                
+                <button class="btn-primary" onclick="generateQR()">Genera QR Code</button>
+            </div>
+            
+            <div class="preview">
+                <div id="canvas"></div>
+                <div class="buttons">
+                    <button class="btn-secondary" onclick="downloadQR('png')">📥 PNG</button>
+                    <button class="btn-tertiary" onclick="downloadQR('svg')">📥 SVG</button>
+
+                </div>
+                   <!-- Contenitore AdSense -->
+    <div class="adsense-container">
+        <p style="font-size: 0.75em; color: #999; margin-bottom: 10px; text-align: center;">Pubblicità</p>
+        <!-- Incolla qui il tuo codice AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0264748655748684"
+     crossorigin="anonymous"></script>
+<!-- qrcode -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-0264748655748684"
+     data-ad-slot="6373605415"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>    
+     <!-- fine codice AdSense -->
+    </div>
+                
+            </div>
+        </div>
+    </div>
+
+<script>
+    let qrCode;
+    let logoImage = null;
+    
+    // Genera QR al caricamento
+    window.addEventListener('DOMContentLoaded', () => {
+        generateQR();
+        
+        // Update size display
+        document.getElementById('logoSize').addEventListener('input', function() {
+            document.getElementById('logoSizeValue').textContent = this.value;
+        });
+        document.getElementById('logoMargin').addEventListener('input', function() {
+            document.getElementById('logoMarginValue').textContent = this.value;
+        });
+    });
+    
+    // Gestione upload logo
+    function handleLogoUpload(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                logoImage = e.target.result;
+                document.getElementById('logoImg').src = logoImage;
+                document.getElementById('logoPreview').style.display = 'flex';
+                document.getElementById('logoSettings').style.display = 'block';
+                generateQR();
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    
+    // Rimuovi logo
+    function removeLogo() {
+        logoImage = null;
+        document.getElementById('logoUpload').value = '';
+        document.getElementById('logoPreview').style.display = 'none';
+        document.getElementById('logoSettings').style.display = 'none';
+        generateQR();
+    }
+ // Toggle sfondo trasparente
+function toggleBackground() {
+    const transparent = document.getElementById('transparentBg').checked;
+    const bgColorInput = document.getElementById('bgColor');
+    
+    if (transparent) {
+        bgColorInput.disabled = true;
+        bgColorInput.style.opacity = '0.5';
+    } else {
+        bgColorInput.disabled = false;
+        bgColorInput.style.opacity = '1';
+    }
+    
+    generateQR();
+}   
+    // Cambia visualizzazione in base al tipo
+    function changeQRType() {
+        // Nascondi tutte le sezioni
+        document.querySelectorAll('.type-section').forEach(section => {
+            section.style.display = 'none';
+        });
+        
+        // Mostra solo la sezione selezionata
+        const type = document.getElementById('qrType').value;
+        const section = document.getElementById('type-' + type);
+        if (section) {
+            section.style.display = 'block';
+        }
+        
+        generateQR();
+    }
+    
+    // Rigenera automaticamente quando cambi i parametri
+    document.querySelectorAll('input, select, textarea').forEach(element => {
+        if (element.id !== 'qrType' && element.type !== 'file') {
+            element.addEventListener('change', generateQR);
+            element.addEventListener('input', debounce(generateQR, 500));
+        }
+    });
+    
+    function getQRContent() {
+        const type = document.getElementById('qrType').value;
+        
+        switch(type) {
+            case 'url':
+                return document.getElementById('url').value || 'https://example.com';
+                
+            case 'text':
+                return document.getElementById('text').value || 'Testo di esempio';
+                
+            case 'email':
+                const email = document.getElementById('email').value;
+                const subject = document.getElementById('emailSubject').value;
+                const body = document.getElementById('emailBody').value;
+                let mailto = `mailto:${email}`;
+                const params = [];
+                if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
+                if (body) params.push(`body=${encodeURIComponent(body)}`);
+                if (params.length > 0) mailto += '?' + params.join('&');
+                return mailto;
+                
+            case 'phone':
+                return `tel:${document.getElementById('phone').value}`;
+                
+            case 'sms':
+                const smsPhone = document.getElementById('smsPhone').value;
+                const smsMessage = document.getElementById('smsMessage').value;
+                return `sms:${smsPhone}${smsMessage ? '?body=' + encodeURIComponent(smsMessage) : ''}`;
+                
+            case 'whatsapp':
+                const waPhone = document.getElementById('waPhone').value.replace(/[^0-9]/g, '');
+                const waMessage = document.getElementById('waMessage').value;
+                return `https://wa.me/${waPhone}${waMessage ? '?text=' + encodeURIComponent(waMessage) : ''}`;
+                
+            case 'wifi':
+                const ssid = document.getElementById('wifiSSID').value;
+                const password = document.getElementById('wifiPassword').value;
+                const encryption = document.getElementById('wifiEncryption').value;
+                const hidden = document.getElementById('wifiHidden').checked;
+                return `WIFI:T:${encryption};S:${ssid};P:${password};H:${hidden ? 'true' : 'false'};;`;
+                
+            case 'vcard':
+                const name = document.getElementById('vcardName').value;
+                const org = document.getElementById('vcardOrg').value;
+                const title = document.getElementById('vcardTitle').value;
+                const phone = document.getElementById('vcardPhone').value;
+                const vcardEmail = document.getElementById('vcardEmail').value;
+                const website = document.getElementById('vcardWebsite').value;
+                const address = document.getElementById('vcardAddress').value;
+                
+                let vcard = 'BEGIN:VCARD\n';
+                vcard += 'VERSION:3.0\n';
+                vcard += `FN:${name}\n`;
+                if (org) vcard += `ORG:${org}\n`;
+                if (title) vcard += `TITLE:${title}\n`;
+                if (phone) vcard += `TEL:${phone}\n`;
+                if (vcardEmail) vcard += `EMAIL:${vcardEmail}\n`;
+                if (website) vcard += `URL:${website}\n`;
+                if (address) vcard += `ADR:;;${address}\n`;
+                vcard += 'END:VCARD';
+                return vcard;
+ case 'event':
+    const eventTitle = document.getElementById('eventTitle').value;
+    const eventLocation = document.getElementById('eventLocation').value;
+    const eventStart = document.getElementById('eventStart').value;
+    const eventEnd = document.getElementById('eventEnd').value;
+    const eventDescription = document.getElementById('eventDescription').value;
+    
+    // Converti in formato iCalendar
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    };
+    
+    let ical = 'BEGIN:VCALENDAR\n';
+    ical += 'VERSION:2.0\n';
+    ical += 'BEGIN:VEVENT\n';
+    ical += `SUMMARY:${eventTitle}\n`;
+    if (eventLocation) ical += `LOCATION:${eventLocation}\n`;
+    if (eventStart) ical += `DTSTART:${formatDate(eventStart)}\n`;
+    if (eventEnd) ical += `DTEND:${formatDate(eventEnd)}\n`;
+    if (eventDescription) ical += `DESCRIPTION:${eventDescription}\n`;
+    ical += 'END:VEVENT\n';
+    ical += 'END:VCALENDAR';
+    return ical;
+    
+case 'bitcoin':
+    const btcAddress = document.getElementById('btcAddress').value;
+    const btcAmount = document.getElementById('btcAmount').value;
+    const btcLabel = document.getElementById('btcLabel').value;
+    const btcMessage = document.getElementById('btcMessage').value;
+    
+    let btcUri = `bitcoin:${btcAddress}`;
+    const btcParams = [];
+    if (btcAmount) btcParams.push(`amount=${btcAmount}`);
+    if (btcLabel) btcParams.push(`label=${encodeURIComponent(btcLabel)}`);
+    if (btcMessage) btcParams.push(`message=${encodeURIComponent(btcMessage)}`);
+    if (btcParams.length > 0) btcUri += '?' + btcParams.join('&');
+    return btcUri;
+    
+
+    
+
+    
+case 'appstore':
+    const appPlatform = document.getElementById('appPlatform').value;
+    const appId = document.getElementById('appId').value;
+    
+    if (appPlatform === 'ios') {
+        return `https://apps.apple.com/app/id${appId}`;
+    } else {
+        return `https://play.google.com/store/apps/details?id=${appId}`;
+    }
+    
+case 'instagram':
+    const igUsername = document.getElementById('igUsername').value.replace('@', '');
+    return `https://instagram.com/${igUsername}`;
+    
+case 'tiktok':
+    const tiktokUsername = document.getElementById('tiktokUsername').value.replace('@', '');
+    return `https://tiktok.com/@${tiktokUsername}`;
+    
+case 'linkedin':
+    const linkedinType = document.getElementById('linkedinType').value;
+    const linkedinUrl = document.getElementById('linkedinUrl').value;
+    
+    if (linkedinType === 'profile') {
+        return `https://linkedin.com/in/${linkedinUrl}`;
+    } else {
+        return `https://linkedin.com/company/${linkedinUrl}`;
+    }
+    
+case 'twitter':
+    const twitterUsername = document.getElementById('twitterUsername').value.replace('@', '');
+    return `https://twitter.com/${twitterUsername}`;
+    
+case 'gps':
+    const gpsLat = document.getElementById('gpsLat').value;
+    const gpsLng = document.getElementById('gpsLng').value;
+    const gpsLabel = document.getElementById('gpsLabel').value;
+    
+    // Formato geo URI
+    let geoUri = `geo:${gpsLat},${gpsLng}`;
+    if (gpsLabel) geoUri += `?q=${gpsLat},${gpsLng}(${encodeURIComponent(gpsLabel)})`;
+    return geoUri;               
+            default:
+                return 'https://example.com';
+        }
+    }
+    
+function generateQR() {
+    const text = getQRContent();
+    const dotsType = document.getElementById('dotsType').value;
+    const cornersType = document.getElementById('cornersType').value;
+    const size = parseInt(document.getElementById('qrSize').value);
+    const margin = parseInt(document.getElementById('qrMargin').value);
+    const transparentBg = document.getElementById('transparentBg').checked;
+    const errorLevel = document.getElementById('errorLevel').value;
+    
+    // Pulisci il canvas precedente
+    document.getElementById('canvas').innerHTML = '';
+    
+    // Configurazione colori/gradienti dots
+    let dotsOptions = {
+        type: dotsType
+    };
+
+    const dotsColorType = document.querySelector('input[name="dotsColorType"]:checked').value;
+    if (dotsColorType === 'solid') {
+        const dotsColor = document.getElementById('dotsColor').value;
+        dotsOptions.color = dotsColor;
+    } else {
+        const gradientType = document.getElementById('dotsGradientType').value;
+        const color1 = document.getElementById('dotsColor1').value;
+        const color2 = document.getElementById('dotsColor2').value;
+        
+        dotsOptions.gradient = {
+            type: gradientType,
+            colorStops: [
+                { offset: 0, color: color1 },
+                { offset: 1, color: color2 }
+            ]
+        };
+        
+        if (gradientType === 'linear') {
+            dotsOptions.gradient.rotation = parseInt(document.getElementById('dotsRotation').value) * Math.PI / 180;
+        }
+    }
+
+    // Configurazione colori/gradienti background
+    let backgroundOptions = {};
+    const bgColorType = document.querySelector('input[name="bgColorType"]:checked').value;
+
+    if (transparentBg) {
+        backgroundOptions.color = 'rgba(255, 255, 255, 0)';
+    } else if (bgColorType === 'solid') {
+        const bgColor = document.getElementById('bgColor').value;
+        backgroundOptions.color = bgColor;
+    } else {
+        const gradientType = document.getElementById('bgGradientType').value;
+        const color1 = document.getElementById('bgColor1').value;
+        const color2 = document.getElementById('bgColor2').value;
+        
+        backgroundOptions.gradient = {
+            type: gradientType,
+            colorStops: [
+                { offset: 0, color: color1 },
+                { offset: 1, color: color2 }
+            ]
+        };
+        
+        if (gradientType === 'linear') {
+            backgroundOptions.gradient.rotation = parseInt(document.getElementById('bgRotation').value) * Math.PI / 180;
+        }
+    }
+
+    // Configurazione colori angoli
+    let cornersSquareOptions = {
+        type: cornersType
+    };
+    
+    let cornersDotOptions = {
+        type: "dot"
+    };
+
+    const customCornersColor = document.getElementById('customCornersColor').checked;
+    
+    if (customCornersColor) {
+        // Corner Squares personalizzati
+        const cornersSquareColorType = document.querySelector('input[name="cornersSquareColorType"]:checked').value;
+        if (cornersSquareColorType === 'solid') {
+            cornersSquareOptions.color = document.getElementById('cornersSquareColor').value;
+        } else {
+            const gradientType = document.getElementById('cornersSquareGradientType').value;
+            const color1 = document.getElementById('cornersSquareColor1').value;
+            const color2 = document.getElementById('cornersSquareColor2').value;
+            
+            cornersSquareOptions.gradient = {
+                type: gradientType,
+                colorStops: [
+                    { offset: 0, color: color1 },
+                    { offset: 1, color: color2 }
+                ]
+            };
+            
+            if (gradientType === 'linear') {
+                cornersSquareOptions.gradient.rotation = parseInt(document.getElementById('cornersSquareRotation').value) * Math.PI / 180;
+            }
+        }
+        
+        // Corner Dots personalizzati
+        const cornersDotColorType = document.querySelector('input[name="cornersDotColorType"]:checked').value;
+        if (cornersDotColorType === 'solid') {
+            cornersDotOptions.color = document.getElementById('cornersDotColor').value;
+        } else {
+            const gradientType = document.getElementById('cornersDotGradientType').value;
+            const color1 = document.getElementById('cornersDotColor1').value;
+            const color2 = document.getElementById('cornersDotColor2').value;
+            
+            cornersDotOptions.gradient = {
+                type: gradientType,
+                colorStops: [
+                    { offset: 0, color: color1 },
+                    { offset: 1, color: color2 }
+                ]
+            };
+            
+            if (gradientType === 'linear') {
+                cornersDotOptions.gradient.rotation = parseInt(document.getElementById('cornersDotRotation').value) * Math.PI / 180;
+            }
+        }
+    } else {
+        // Usa lo stesso colore dei dots
+        let cornersColor;
+        if (dotsColorType === 'solid') {
+            cornersColor = document.getElementById('dotsColor').value;
+        } else {
+            cornersColor = document.getElementById('dotsColor1').value;
+        }
+        
+        cornersSquareOptions.color = cornersColor;
+        cornersDotOptions.color = cornersColor;
+    }
+
+    const qrOptions = {
+        width: size,
+        height: size,
+        data: text,
+        margin: margin,
+        qrOptions: {
+            typeNumber: 0,
+            mode: "Byte",
+            errorCorrectionLevel: errorLevel
+        },
+        dotsOptions: dotsOptions,
+        backgroundOptions: backgroundOptions,
+        cornersSquareOptions: cornersSquareOptions,
+        cornersDotOptions: cornersDotOptions
+    };
+    
+    // Aggiungi il logo se presente
+    if (logoImage) {
+        const logoSize = parseFloat(document.getElementById('logoSize').value);
+        const logoMargin = parseInt(document.getElementById('logoMargin').value);
+        const hideBackground = document.getElementById('logoHideBackground').checked;
+        
+        qrOptions.image = logoImage;
+        qrOptions.imageOptions = {
+            hideBackgroundDots: hideBackground,
+            imageSize: logoSize,
+            margin: logoMargin,
+            crossOrigin: "anonymous"
+        };
+    }
+    
+    qrCode = new QRCodeStyling(qrOptions);
+    qrCode.append(document.getElementById("canvas"));
+}
+
+    
+    function downloadQR(extension) {
+        if (qrCode) {
+            const type = document.getElementById('qrType').value;
+            qrCode.download({ 
+                name: `qrcode-${type}`, 
+                extension: extension 
+            });
+        }
+    }
+    
+    // Funzione debounce per evitare troppi aggiornamenti
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+    
+ 
+// Toggle gradient visibility
+function toggleGradient(type) {
+    const isSolid = document.querySelector(`input[name="${type}ColorType"]:checked`).value === 'solid';
+    
+    if (type === 'dots') {
+        document.getElementById('dotsSolid').style.display = isSolid ? 'block' : 'none';
+        document.getElementById('dotsGradient').style.display = isSolid ? 'none' : 'block';
+    } else if (type === 'bg') {
+        document.getElementById('bgSolid').style.display = isSolid ? 'block' : 'none';
+        document.getElementById('bgGradient').style.display = isSolid ? 'none' : 'block';
+    } else if (type === 'cornersSquare') {
+        document.getElementById('cornersSquareSolid').style.display = isSolid ? 'block' : 'none';
+        document.getElementById('cornersSquareGradient').style.display = isSolid ? 'none' : 'block';
+    } else if (type === 'cornersDot') {
+        document.getElementById('cornersDotSolid').style.display = isSolid ? 'block' : 'none';
+        document.getElementById('cornersDotGradient').style.display = isSolid ? 'none' : 'block';
+    }
+    
+    generateQR();
+}
+
+// Toggle gradient type options
+document.getElementById('dotsGradientType').addEventListener('change', function() {
+    document.getElementById('dotsLinearOptions').style.display = 
+        this.value === 'linear' ? 'block' : 'none';
+    generateQR();
+});
+
+document.getElementById('bgGradientType').addEventListener('change', function() {
+    document.getElementById('bgLinearOptions').style.display = 
+        this.value === 'linear' ? 'block' : 'none';
+    generateQR();
+});
+
+// Update rotation displays
+document.getElementById('dotsRotation').addEventListener('input', function() {
+    document.getElementById('dotsRotationValue').textContent = this.value + '°';
+});
+
+document.getElementById('bgRotation').addEventListener('input', function() {
+    document.getElementById('bgRotationValue').textContent = this.value + '°';
+});
+
+// Preset definitions
+const presets = {
+    classic: {
+        dotsColorType: 'solid',
+        dotsColor: '#4267b2',
+        bgColorType: 'solid',
+        bgColor: '#ffffff',
+        dotsType: 'rounded',
+        cornersType: 'square'
+    },
+    elegant: {
+        dotsColorType: 'solid',
+        dotsColor: '#000000',
+        bgColorType: 'solid',
+        bgColor: '#ffffff',
+        dotsType: 'square',
+        cornersType: 'square'
+    },
+    neon: {
+        dotsColorType: 'gradient',
+        dotsGradientType: 'linear',
+        dotsColor1: '#667eea',
+        dotsColor2: '#764ba2',
+        dotsRotation: 45,
+        bgColorType: 'solid',
+        bgColor: '#1a1a2e',
+        dotsType: 'rounded',
+        cornersType: 'dot'
+    },
+    sunset: {
+        dotsColorType: 'gradient',
+        dotsGradientType: 'linear',
+        dotsColor1: '#ff6b6b',
+        dotsColor2: '#feca57',
+        dotsRotation: 135,
+        bgColorType: 'gradient',
+        bgGradientType: 'linear',
+        bgColor1: '#fff5f5',
+        bgColor2: '#fffaf0',
+        bgRotation: 135,
+        dotsType: 'rounded',
+        cornersType: 'extra-rounded'
+    },
+    ocean: {
+        dotsColorType: 'gradient',
+        dotsGradientType: 'radial',
+        dotsColor1: '#00d2ff',
+        dotsColor2: '#3a47d5',
+        bgColorType: 'solid',
+        bgColor: '#f0f9ff',
+        dotsType: 'dots',
+        cornersType: 'dot'
+    },
+    forest: {
+        dotsColorType: 'gradient',
+        dotsGradientType: 'linear',
+        dotsColor1: '#134e4a',
+        dotsColor2: '#6ee7b7',
+        dotsRotation: 90,
+        bgColorType: 'solid',
+        bgColor: '#f0fdf4',
+        dotsType: 'classy-rounded',
+        cornersType: 'extra-rounded'
+    },
+    rose: {
+        dotsColorType: 'gradient',
+        dotsGradientType: 'linear',
+        dotsColor1: '#ed64a6',
+        dotsColor2: '#f6ad55',
+        dotsRotation: 45,
+        bgColorType: 'solid',
+        bgColor: '#fff5f7',
+        dotsType: 'extra-rounded',
+        cornersType: 'dot'
+    },
+    minimal: {
+        dotsColorType: 'solid',
+        dotsColor: '#000000',
+        bgColorType: 'solid',
+        bgColor: '#ffffff',
+        dotsType: 'square',
+        cornersType: 'square'
+    }
+};
+
+
+// Toggle corners color customization
+function toggleCornersColor() {
+    const customCornersColor = document.getElementById('customCornersColor').checked;
+    document.getElementById('cornersColorSection').style.display = customCornersColor ? 'block' : 'none';
+    generateQR();
+}
+
+// Update corners rotation displays
+document.addEventListener('DOMContentLoaded', function() {
+    const cornersSquareRotation = document.getElementById('cornersSquareRotation');
+    const cornersDotRotation = document.getElementById('cornersDotRotation');
+    
+    if (cornersSquareRotation) {
+        cornersSquareRotation.addEventListener('input', function() {
+            document.getElementById('cornersSquareRotationValue').textContent = this.value + '°';
+        });
+    }
+    
+    if (cornersDotRotation) {
+        cornersDotRotation.addEventListener('input', function() {
+            document.getElementById('cornersDotRotationValue').textContent = this.value + '°';
+        });
+    }
+});
+
+// Toggle gradient type options for corners
+document.getElementById('cornersSquareGradientType').addEventListener('change', function() {
+    document.getElementById('cornersSquareLinearOptions').style.display = 
+        this.value === 'linear' ? 'block' : 'none';
+    generateQR();
+});
+
+document.getElementById('cornersDotGradientType').addEventListener('change', function() {
+    document.getElementById('cornersDotLinearOptions').style.display = 
+        this.value === 'linear' ? 'block' : 'none';
+    generateQR();
+});
+
+
+
+
+// Apply preset
+function applyPreset() {
+    const presetName = document.getElementById('presetSelect').value;
+    if (!presetName) return;
+    
+    const preset = presets[presetName];
+    
+    // Dots color type
+    document.querySelector(`input[name="dotsColorType"][value="${preset.dotsColorType}"]`).checked = true;
+    toggleGradient('dots');
+    
+    if (preset.dotsColorType === 'solid') {
+        document.getElementById('dotsColor').value = preset.dotsColor;
+    } else {
+        document.getElementById('dotsGradientType').value = preset.dotsGradientType;
+        document.getElementById('dotsColor1').value = preset.dotsColor1;
+        document.getElementById('dotsColor2').value = preset.dotsColor2;
+        if (preset.dotsRotation) {
+            document.getElementById('dotsRotation').value = preset.dotsRotation;
+            document.getElementById('dotsRotationValue').textContent = preset.dotsRotation + '°';
+        }
+        document.getElementById('dotsGradientType').dispatchEvent(new Event('change'));
+    }
+    
+    // Background color type
+    document.querySelector(`input[name="bgColorType"][value="${preset.bgColorType}"]`).checked = true;
+    toggleGradient('bg');
+    
+    if (preset.bgColorType === 'solid') {
+        document.getElementById('bgColor').value = preset.bgColor;
+    } else {
+        document.getElementById('bgGradientType').value = preset.bgGradientType;
+        document.getElementById('bgColor1').value = preset.bgColor1;
+        document.getElementById('bgColor2').value = preset.bgColor2;
+        if (preset.bgRotation) {
+            document.getElementById('bgRotation').value = preset.bgRotation;
+            document.getElementById('bgRotationValue').textContent = preset.bgRotation + '°';
+        }
+        document.getElementById('bgGradientType').dispatchEvent(new Event('change'));
+    }
+    
+    // Styles
+    document.getElementById('dotsType').value = preset.dotsType;
+    document.getElementById('cornersType').value = preset.cornersType;
+    
+    generateQR();
+}
+
+// Save custom preset
+function savePreset() {
+    const name = prompt('Inserisci un nome per questo template:');
+    if (!name) return;
+    
+    const customPreset = {
+        dotsColorType: document.querySelector('input[name="dotsColorType"]:checked').value,
+        bgColorType: document.querySelector('input[name="bgColorType"]:checked').value,
+        dotsType: document.getElementById('dotsType').value,
+        cornersType: document.getElementById('cornersType').value
+    };
+    
+    if (customPreset.dotsColorType === 'solid') {
+        customPreset.dotsColor = document.getElementById('dotsColor').value;
+    } else {
+        customPreset.dotsGradientType = document.getElementById('dotsGradientType').value;
+        customPreset.dotsColor1 = document.getElementById('dotsColor1').value;
+        customPreset.dotsColor2 = document.getElementById('dotsColor2').value;
+        if (customPreset.dotsGradientType === 'linear') {
+            customPreset.dotsRotation = parseInt(document.getElementById('dotsRotation').value);
+        }
+    }
+    
+    if (customPreset.bgColorType === 'solid') {
+        customPreset.bgColor = document.getElementById('bgColor').value;
+    } else {
+        customPreset.bgGradientType = document.getElementById('bgGradientType').value;
+        customPreset.bgColor1 = document.getElementById('bgColor1').value;
+        customPreset.bgColor2 = document.getElementById('bgColor2').value;
+        if (customPreset.bgGradientType === 'linear') {
+            customPreset.bgRotation = parseInt(document.getElementById('bgRotation').value);
+        }
+    }
+    
+    // Save to localStorage
+    const savedPresets = JSON.parse(localStorage.getItem('qrPresets') || '{}');
+    savedPresets[name] = customPreset;
+    localStorage.setItem('qrPresets', JSON.stringify(savedPresets));
+    
+    // Add to select
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = '⭐ ' + name;
+    document.getElementById('presetSelect').appendChild(option);
+    document.getElementById('presetSelect').value = name;
+    
+    alert('Template salvato con successo!');
+}
+
+// Load custom presets on page load
+window.addEventListener('DOMContentLoaded', () => {
+    const savedPresets = JSON.parse(localStorage.getItem('qrPresets') || '{}');
+    Object.keys(savedPresets).forEach(name => {
+        presets[name] = savedPresets[name];
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = '⭐ ' + name;
+        document.getElementById('presetSelect').appendChild(option);
+    });
+});    
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0264748655748684"
+     crossorigin="anonymous"></script>
+<footer style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; text-align: center; margin-top: 0;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        <p style="margin: 0; font-size: 1em; opacity: 0.95;">
+            Powered by <strong><a href="#" onclick="window.open(atob('aHR0cHM6Ly93d3cuc3RvcmlhZGVsbGFmb3RvZ3JhZmlhLmNvbQ=='), '_blank'); return false;" style="color: white; text-decoration: none; border-bottom: 2px solid rgba(255,255,255,0.5); transition: border-color 0.3s; cursor: pointer;">GIF Web Solutions</a></strong>
+        </p>
+        <p style="margin: 10px 0 0 0; font-size: 0.85em; opacity: 0.8;">
+            Strumenti web professionali • QR Code Generator © 2026
+        </p>
+    </div>
+</footer>
+</body>
+</html>
