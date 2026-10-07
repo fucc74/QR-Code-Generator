@@ -82,6 +82,9 @@ body {
 .brand h1 { font-size: 1.15rem; font-weight: 750; letter-spacing: -.01em; line-height: 1.15; }
 .brand p { font-size: .8rem; color: var(--muted); }
 
+.top-actions { display: flex; align-items: center; gap: 10px; }
+.lang-seg { height: 42px; align-items: center; border-radius: 13px; flex-wrap: nowrap; flex: none; }
+.lang-seg span { padding: 7px 10px; font-size: .8rem; }
 .icon-btn {
     width: 42px; height: 42px; border-radius: 13px;
     background: var(--surface); border: 1px solid var(--border);
@@ -438,6 +441,10 @@ footer strong { color: var(--text); }
     .toast { bottom: 90px; }
 }
 @media (max-width: 560px) {
+    .brand p { display: none; }
+    .brand h1 { font-size: 1rem; }
+    .top-actions { gap: 8px; }
+    .lang-seg span { padding: 7px 8px; }
     .pane { padding: 16px; }
     .tab .tl { font-size: .78rem; }
     .tab { flex-direction: column; gap: 2px; padding: 9px 2px; }
@@ -463,7 +470,14 @@ footer strong { color: var(--text); }
             <p>Personalizza, scarica, condividi</p>
         </div>
     </div>
-    <button class="icon-btn" id="themeBtn" type="button" aria-label="Cambia tema chiaro/scuro" title="Cambia tema">🌙</button>
+    <div class="top-actions">
+        <div class="seg lang-seg" role="radiogroup" aria-label="Lingua">
+            <label><input type="radio" name="lang" value="it"><span>IT</span></label>
+            <label><input type="radio" name="lang" value="en"><span>EN</span></label>
+            <label><input type="radio" name="lang" value="es"><span>ES</span></label>
+        </div>
+        <button class="icon-btn" id="themeBtn" type="button" aria-label="Cambia tema chiaro/scuro" title="Cambia tema">🌙</button>
+    </div>
 </header>
 
 <section class="hero">
@@ -796,6 +810,77 @@ const radioVal = name => document.querySelector(`input[name="${name}"]:checked`)
 const setRadio = (name, v) => { const el = document.querySelector(`input[name="${name}"][value="${v}"]`); if (el) el.checked = true; };
 
 /* =========================================================
+   Lingue (IT originale nel markup, EN/ES via dizionario)
+   ========================================================= */
+const DICT = { en: {"Personalizza, scarica, condividi": "Customize, download, share", "QR Code": "QR Codes", "belli da vedere": "that look great", ", facili da creare.": ", made easy.", "16 tipi di contenuto, colori e gradienti, logo al centro e download in alta qualità. Tutto nel tuo browser: nessun dato lascia il dispositivo.": "16 content types, colors and gradients, a logo in the center and high-quality downloads. Everything runs in your browser: no data ever leaves your device.", "Contenuto": "Content", "Stile": "Style", "Opzioni": "Options", "Che cosa vuoi codificare?": "What do you want to encode?", "Testo": "Text", "Telefono": "Phone", "Contatto": "Contact", "Evento": "Event", "App": "App", "Posizione": "Location", "Dettagli": "Details", "Indirizzo web": "Web address", "Se dimentichi https:// lo aggiungiamo noi.": "If you forget https:// we'll add it for you.", "Email destinatario": "Recipient email", "Oggetto": "Subject", "(opzionale)": "(optional)", "Messaggio": "Message", "Numero di telefono": "Phone number", "Numero WhatsApp": "WhatsApp number", "Con prefisso internazionale (39 per l'Italia), senza + o spazi.": "With country code (39 for Italy), no + or spaces.", "Messaggio precompilato": "Pre-filled message", "Nome rete (SSID)": "Network name (SSID)", "Sicurezza": "Security", "Nessuna": "None", "Rete nascosta": "Hidden network", "Nome completo": "Full name", "Azienda": "Company", "Ruolo": "Job title", "Sito web": "Website", "Indirizzo": "Address", "Titolo evento": "Event title", "Inizio": "Start", "Fine": "End", "Luogo": "Place", "Descrizione": "Description", "Indirizzo Bitcoin": "Bitcoin address", "Importo in BTC": "Amount in BTC", "Etichetta": "Label", "Piattaforma": "Platform", "ID app": "App ID", "iOS: il numero dopo \"id\" nell'URL • Android: il package name.": "iOS: the number after \"id\" in the URL • Android: the package name.", "Username Instagram": "Instagram username", "Puoi incollare anche il link completo.": "You can also paste the full link.", "Username TikTok": "TikTok username", "Tipo di pagina": "Page type", "Profilo personale": "Personal profile", "Pagina aziendale": "Company page", "Identificativo o link": "Handle or link", "Solo la parte finale dell'URL, oppure incolla il link intero.": "Just the last part of the URL, or paste the whole link.", "Username X / Twitter": "X / Twitter username", "Latitudine": "Latitude", "Longitudine": "Longitude", "Nome del luogo": "Place name", "📍 Usa la mia posizione": "📍 Use my location", "Template": "Templates", "Classico": "Classic", "Elegante": "Elegant", "Tramonto": "Sunset", "Oceano": "Ocean", "Foresta": "Forest", "Rosa Gold": "Rose Gold", "＋ Salva il mio": "＋ Save mine", "Colori": "Colors", "Punti": "Dots", "Solido": "Solid", "Gradiente": "Gradient", "Lineare": "Linear", "Radiale": "Radial", "Rotazione": "Rotation", "Sfondo": "Background", "Sfondo trasparente": "Transparent background", "Ideale per PNG e SVG": "Best for PNG and SVG", "Colori personalizzati per gli angoli": "Custom colors for the corners", "Cornice angoli": "Corner frame", "Centro angoli": "Corner center", "Forma dei punti": "Dot shape", "Arrotondato": "Rounded", "Cerchi": "Circles", "Quadrato": "Square", "Forma degli angoli": "Corner shape", "Cerchio": "Circle", "Punto centrale degli angoli": "Corner center dot", "Immagine al centro": "Center image", "Trascina qui il tuo logo o tocca per scegliere": "Drop your logo here or tap to choose", "PNG, JPG, SVG o WebP • max 2 MB": "PNG, JPG, SVG or WebP • max 2 MB", "Logo caricato": "Logo loaded", "Rimuovi": "Remove", "Impostazioni logo": "Logo settings", "Dimensione": "Size", "Oltre 0.3 la scansione può diventare difficile.": "Above 0.3 scanning can become difficult.", "Margine attorno al logo": "Margin around the logo", "Nascondi i punti sotto il logo": "Hide dots behind the logo", "Dimensioni di esportazione": "Export size", "Lato del QR": "QR side length", "È la risoluzione del file scaricato; l'anteprima si adatta allo schermo.": "This is the resolution of the downloaded file; the preview adapts to your screen.", "Margine (zona di rispetto)": "Margin (quiet zone)", "Correzione errori": "Error correction", "Più è alto, più il QR resiste a graffi e loghi grandi, ma diventa più denso. Con un logo usa Q o H.": "The higher it is, the better the QR withstands scratches and large logos, but the denser it gets. With a logo use Q or H.", "Impostazioni": "Settings", "↺ Ripristina tutto": "↺ Reset everything", "Compila i campi per vedere il tuo QR Code": "Fill in the fields to see your QR Code", "Ottima leggibilità": "Excellent readability", "Leggibilità": "Readability", "⬇ Scarica": "⬇ Download", "Powered by": "Powered by", "Lingua": "Language", "Cambia tema chiaro/scuro": "Switch light/dark theme", "Cambia tema": "Switch theme", "Impostazioni QR Code": "QR Code settings", "https://tuosito.com": "https://yoursite.com", "Scrivi qui il tuo testo…": "Write your text here…", "Oggetto email": "Email subject", "Corpo del messaggio…": "Message body…", "Testo dell'SMS…": "SMS text…", "Ciao! Vorrei maggiori informazioni…": "Hi! I'd like more information…", "Nome WiFi": "WiFi name", "Nome Azienda": "Company name", "CEO, Developer…": "CEO, Developer…", "Via Example 123, Milano, Italia": "123 Example St, London, UK", "Nome dell'evento": "Event name", "Via Example 123, Milano": "123 Example St, London", "Dettagli dell'evento…": "Event details…", "Donazione": "Donation", "Grazie!": "Thank you!", "123456789 oppure com.esempio.app": "123456789 or com.example.app", "@nomeutente": "@username", "mario-rossi-123456": "john-smith-123456", "Duomo di Milano": "Milan Cathedral", "Anteprima logo": "Logo preview", "Livello di correzione errori": "Error correction level", "Anteprima": "Preview", "Formato di download": "Download format", "Copia negli appunti": "Copy to clipboard", "Condividi": "Share", "Copia": "Copy", "Generatore QR Code Professionale": "Professional QR Code Generator", "Crea QR Code personalizzati gratis: colori, gradienti, logo, Wi-Fi, vCard, eventi, WhatsApp e molto altro. Scarica in PNG, SVG, JPG o WebP.": "Create custom QR Codes for free: colors, gradients, logo, Wi-Fi, vCard, events, WhatsApp and much more. Download as PNG, SVG, JPG or WebP.", "Inserisci un indirizzo web.": "Enter a web address.", "Scrivi il testo da codificare.": "Write the text to encode.", "Inserisci un indirizzo email.": "Enter an email address.", "Inserisci un numero di telefono.": "Enter a phone number.", "Inserisci un numero WhatsApp.": "Enter a WhatsApp number.", "Inserisci il nome della rete (SSID).": "Enter the network name (SSID).", "Inserisci la password della rete.": "Enter the network password.", "Inserisci il nome completo.": "Enter the full name.", "Inserisci il titolo dell'evento.": "Enter the event title.", "Inserisci data e ora di inizio.": "Enter the start date and time.", "Data evento non valida.": "Invalid event date.", "La fine dell'evento precede l'inizio.": "The event ends before it starts.", "Inserisci un indirizzo Bitcoin.": "Enter a Bitcoin address.", "Indirizzo Bitcoin non valido.": "Invalid Bitcoin address.", "L'importo deve essere maggiore di zero.": "The amount must be greater than zero.", "Inserisci l'ID dell'app.": "Enter the app ID.", "L'ID iOS deve essere numerico.": "The iOS ID must be numeric.", "Inserisci lo username Instagram.": "Enter the Instagram username.", "Inserisci lo username TikTok.": "Enter the TikTok username.", "Inserisci l'identificativo LinkedIn.": "Enter the LinkedIn handle.", "Inserisci lo username X / Twitter.": "Enter the X / Twitter username.", "Latitudine non valida (da -90 a 90).": "Invalid latitude (-90 to 90).", "Longitudine non valida (da -180 a 180).": "Invalid longitude (-180 to 180).", "Tipo di QR Code non supportato.": "Unsupported QR Code type.", "Libreria qr-code-styling.js non caricata.": "qr-code-styling.js library not loaded.", "Contenuto troppo lungo per un QR Code. Riduci il testo.": "Content too long for a QR Code. Shorten the text.", "Impossibile generare il QR Code.": "Unable to generate the QR Code.", "QR invertito": "Inverted QR", "I punti sono più chiari dello sfondo: molti lettori non lo scansionano.": "The dots are lighter than the background: many readers won't scan it.", "Contrasto basso": "Low contrast", "Contrasto troppo basso tra punti e sfondo.": "Contrast between dots and background is too low.", "Buona leggibilità": "Good readability", "Posiziona il QR su uno sfondo chiaro e uniforme.": "Place the QR on a light, uniform background.", "Logo grande": "Large logo", "Con un logo usa correzione Q/H e una dimensione ≤ 0.3.": "With a logo use Q/H correction and a size ≤ 0.3.", "QR molto denso": "Very dense QR", "Molti dati: stampa il QR abbastanza grande.": "Lots of data: print the QR large enough.", "Nome riservato: scegline un altro": "Reserved name: pick another one", "Salvato solo per questa sessione": "Saved for this session only", "Template salvato ✔": "Template saved ✔", "Geolocalizzazione non supportata": "Geolocation not supported", "Impossibile ottenere la posizione": "Unable to get your location", "Compila prima i campi richiesti": "Fill in the required fields first", "Download avviato": "Download started", "QR Code copiato negli appunti ✔": "QR Code copied to clipboard ✔", "Copia non supportata: usa il download": "Copy not supported: use download", "Condivisione non disponibile": "Sharing not available", "Seleziona un file immagine": "Select an image file", "Immagine troppo grande (max 2 MB)": "Image too large (max 2 MB)", "Impostazioni ripristinate": "Settings restored", "Dai un nome al tuo template:": "Give your template a name:", "Ripristinare tutte le impostazioni di stile?": "Reset all style settings?", "Elimina template": "Delete template"}, es: {"Password": "Contraseña", "Personalizza, scarica, condividi": "Personaliza, descarga, comparte", "QR Code": "Códigos QR", "belli da vedere": "que lucen genial", ", facili da creare.": ", fáciles de crear.", "16 tipi di contenuto, colori e gradienti, logo al centro e download in alta qualità. Tutto nel tuo browser: nessun dato lascia il dispositivo.": "16 tipos de contenido, colores y degradados, logo en el centro y descargas en alta calidad. Todo funciona en tu navegador: ningún dato sale de tu dispositivo.", "Contenuto": "Contenido", "Stile": "Estilo", "Opzioni": "Opciones", "Che cosa vuoi codificare?": "¿Qué quieres codificar?", "Testo": "Texto", "Telefono": "Teléfono", "Contatto": "Contacto", "Evento": "Evento", "App": "App", "Posizione": "Ubicación", "Dettagli": "Detalles", "Indirizzo web": "Dirección web", "Se dimentichi https:// lo aggiungiamo noi.": "Si olvidas https:// lo añadimos nosotros.", "Email destinatario": "Email del destinatario", "Oggetto": "Asunto", "(opzionale)": "(opcional)", "Messaggio": "Mensaje", "Numero di telefono": "Número de teléfono", "Numero WhatsApp": "Número de WhatsApp", "Con prefisso internazionale (39 per l'Italia), senza + o spazi.": "Con prefijo internacional (34 para España), sin + ni espacios.", "Messaggio precompilato": "Mensaje predefinido", "Nome rete (SSID)": "Nombre de red (SSID)", "Sicurezza": "Seguridad", "Nessuna": "Ninguna", "Rete nascosta": "Red oculta", "Nome completo": "Nombre completo", "Azienda": "Empresa", "Ruolo": "Cargo", "Sito web": "Sitio web", "Indirizzo": "Dirección", "Titolo evento": "Título del evento", "Inizio": "Inicio", "Fine": "Fin", "Luogo": "Lugar", "Descrizione": "Descripción", "Indirizzo Bitcoin": "Dirección Bitcoin", "Importo in BTC": "Importe en BTC", "Etichetta": "Etiqueta", "Piattaforma": "Plataforma", "ID app": "ID de la app", "iOS: il numero dopo \"id\" nell'URL • Android: il package name.": "iOS: el número después de \"id\" en la URL • Android: el nombre del paquete.", "Username Instagram": "Usuario de Instagram", "Puoi incollare anche il link completo.": "También puedes pegar el enlace completo.", "Username TikTok": "Usuario de TikTok", "Tipo di pagina": "Tipo de página", "Profilo personale": "Perfil personal", "Pagina aziendale": "Página de empresa", "Identificativo o link": "Identificador o enlace", "Solo la parte finale dell'URL, oppure incolla il link intero.": "Solo la parte final de la URL, o pega el enlace completo.", "Username X / Twitter": "Usuario de X / Twitter", "Latitudine": "Latitud", "Longitudine": "Longitud", "Nome del luogo": "Nombre del lugar", "📍 Usa la mia posizione": "📍 Usar mi ubicación", "Template": "Plantillas", "Classico": "Clásico", "Elegante": "Elegante", "Tramonto": "Atardecer", "Oceano": "Océano", "Foresta": "Bosque", "Rosa Gold": "Oro rosa", "＋ Salva il mio": "＋ Guardar el mío", "Colori": "Colores", "Punti": "Puntos", "Solido": "Sólido", "Gradiente": "Degradado", "Lineare": "Lineal", "Radiale": "Radial", "Rotazione": "Rotación", "Sfondo": "Fondo", "Sfondo trasparente": "Fondo transparente", "Ideale per PNG e SVG": "Ideal para PNG y SVG", "Colori personalizzati per gli angoli": "Colores personalizados para las esquinas", "Cornice angoli": "Marco de esquinas", "Centro angoli": "Centro de esquinas", "Forma dei punti": "Forma de los puntos", "Arrotondato": "Redondeado", "Cerchi": "Círculos", "Quadrato": "Cuadrado", "Forma degli angoli": "Forma de las esquinas", "Cerchio": "Círculo", "Punto centrale degli angoli": "Punto central de las esquinas", "Immagine al centro": "Imagen central", "Trascina qui il tuo logo o tocca per scegliere": "Arrastra aquí tu logo o toca para elegir", "PNG, JPG, SVG o WebP • max 2 MB": "PNG, JPG, SVG o WebP • máx. 2 MB", "Logo caricato": "Logo cargado", "Rimuovi": "Quitar", "Impostazioni logo": "Ajustes del logo", "Dimensione": "Tamaño", "Oltre 0.3 la scansione può diventare difficile.": "Por encima de 0.3 el escaneo puede resultar difícil.", "Margine attorno al logo": "Margen alrededor del logo", "Nascondi i punti sotto il logo": "Ocultar los puntos bajo el logo", "Dimensioni di esportazione": "Tamaño de exportación", "Lato del QR": "Lado del QR", "È la risoluzione del file scaricato; l'anteprima si adatta allo schermo.": "Es la resolución del archivo descargado; la vista previa se adapta a la pantalla.", "Margine (zona di rispetto)": "Margen (zona de silencio)", "Correzione errori": "Corrección de errores", "Più è alto, più il QR resiste a graffi e loghi grandi, ma diventa più denso. Con un logo usa Q o H.": "Cuanto más alto, mejor resiste el QR a arañazos y logos grandes, pero más denso se vuelve. Con un logo usa Q o H.", "Impostazioni": "Ajustes", "↺ Ripristina tutto": "↺ Restablecer todo", "Compila i campi per vedere il tuo QR Code": "Rellena los campos para ver tu código QR", "Ottima leggibilità": "Excelente legibilidad", "Leggibilità": "Legibilidad", "⬇ Scarica": "⬇ Descargar", "Powered by": "Desarrollado por", "Lingua": "Idioma", "Cambia tema chiaro/scuro": "Cambiar tema claro/oscuro", "Cambia tema": "Cambiar tema", "Impostazioni QR Code": "Ajustes del código QR", "https://tuosito.com": "https://tusitio.com", "Scrivi qui il tuo testo…": "Escribe aquí tu texto…", "Oggetto email": "Asunto del email", "Corpo del messaggio…": "Cuerpo del mensaje…", "Testo dell'SMS…": "Texto del SMS…", "Ciao! Vorrei maggiori informazioni…": "¡Hola! Me gustaría más información…", "Nome WiFi": "Nombre del WiFi", "Nome Azienda": "Nombre de la empresa", "CEO, Developer…": "CEO, Desarrollador…", "Via Example 123, Milano, Italia": "Calle Ejemplo 123, Madrid, España", "Nome dell'evento": "Nombre del evento", "Via Example 123, Milano": "Calle Ejemplo 123, Madrid", "Dettagli dell'evento…": "Detalles del evento…", "Donazione": "Donación", "Grazie!": "¡Gracias!", "123456789 oppure com.esempio.app": "123456789 o com.ejemplo.app", "@nomeutente": "@usuario", "mario-rossi-123456": "juan-perez-123456", "Duomo di Milano": "Catedral de Milán", "Anteprima logo": "Vista previa del logo", "Livello di correzione errori": "Nivel de corrección de errores", "Anteprima": "Vista previa", "Formato di download": "Formato de descarga", "Copia negli appunti": "Copiar al portapapeles", "Condividi": "Compartir", "Copia": "Copiar", "Generatore QR Code Professionale": "Generador de códigos QR profesional", "Crea QR Code personalizzati gratis: colori, gradienti, logo, Wi-Fi, vCard, eventi, WhatsApp e molto altro. Scarica in PNG, SVG, JPG o WebP.": "Crea códigos QR personalizados gratis: colores, degradados, logo, Wi-Fi, vCard, eventos, WhatsApp y mucho más. Descarga en PNG, SVG, JPG o WebP.", "Inserisci un indirizzo web.": "Introduce una dirección web.", "Scrivi il testo da codificare.": "Escribe el texto a codificar.", "Inserisci un indirizzo email.": "Introduce una dirección de email.", "Inserisci un numero di telefono.": "Introduce un número de teléfono.", "Inserisci un numero WhatsApp.": "Introduce un número de WhatsApp.", "Inserisci il nome della rete (SSID).": "Introduce el nombre de la red (SSID).", "Inserisci la password della rete.": "Introduce la contraseña de la red.", "Inserisci il nome completo.": "Introduce el nombre completo.", "Inserisci il titolo dell'evento.": "Introduce el título del evento.", "Inserisci data e ora di inizio.": "Introduce la fecha y hora de inicio.", "Data evento non valida.": "Fecha del evento no válida.", "La fine dell'evento precede l'inizio.": "El evento termina antes de empezar.", "Inserisci un indirizzo Bitcoin.": "Introduce una dirección Bitcoin.", "Indirizzo Bitcoin non valido.": "Dirección Bitcoin no válida.", "L'importo deve essere maggiore di zero.": "El importe debe ser mayor que cero.", "Inserisci l'ID dell'app.": "Introduce el ID de la app.", "L'ID iOS deve essere numerico.": "El ID de iOS debe ser numérico.", "Inserisci lo username Instagram.": "Introduce el usuario de Instagram.", "Inserisci lo username TikTok.": "Introduce el usuario de TikTok.", "Inserisci l'identificativo LinkedIn.": "Introduce el identificador de LinkedIn.", "Inserisci lo username X / Twitter.": "Introduce el usuario de X / Twitter.", "Latitudine non valida (da -90 a 90).": "Latitud no válida (de -90 a 90).", "Longitudine non valida (da -180 a 180).": "Longitud no válida (de -180 a 180).", "Tipo di QR Code non supportato.": "Tipo de código QR no compatible.", "Libreria qr-code-styling.js non caricata.": "Biblioteca qr-code-styling.js no cargada.", "Contenuto troppo lungo per un QR Code. Riduci il testo.": "Contenido demasiado largo para un código QR. Acorta el texto.", "Impossibile generare il QR Code.": "No se pudo generar el código QR.", "QR invertito": "QR invertido", "I punti sono più chiari dello sfondo: molti lettori non lo scansionano.": "Los puntos son más claros que el fondo: muchos lectores no lo escanearán.", "Contrasto basso": "Contraste bajo", "Contrasto troppo basso tra punti e sfondo.": "El contraste entre puntos y fondo es demasiado bajo.", "Buona leggibilità": "Buena legibilidad", "Posiziona il QR su uno sfondo chiaro e uniforme.": "Coloca el QR sobre un fondo claro y uniforme.", "Logo grande": "Logo grande", "Con un logo usa correzione Q/H e una dimensione ≤ 0.3.": "Con un logo usa corrección Q/H y un tamaño ≤ 0.3.", "QR molto denso": "QR muy denso", "Molti dati: stampa il QR abbastanza grande.": "Muchos datos: imprime el QR suficientemente grande.", "Nome riservato: scegline un altro": "Nombre reservado: elige otro", "Salvato solo per questa sessione": "Guardado solo para esta sesión", "Template salvato ✔": "Plantilla guardada ✔", "Geolocalizzazione non supportata": "Geolocalización no compatible", "Impossibile ottenere la posizione": "No se pudo obtener la ubicación", "Compila prima i campi richiesti": "Rellena primero los campos obligatorios", "Download avviato": "Descarga iniciada", "QR Code copiato negli appunti ✔": "Código QR copiado al portapapeles ✔", "Copia non supportata: usa il download": "Copia no compatible: usa la descarga", "Condivisione non disponibile": "Compartir no disponible", "Seleziona un file immagine": "Selecciona un archivo de imagen", "Immagine troppo grande (max 2 MB)": "Imagen demasiado grande (máx. 2 MB)", "Impostazioni ripristinate": "Ajustes restablecidos", "Dai un nome al tuo template:": "Ponle un nombre a tu plantilla:", "Ripristinare tutte le impostazioni di stile?": "¿Restablecer todos los ajustes de estilo?", "Elimina template": "Eliminar plantilla"} };
+let lang = 'it';
+function translateStr(src) {
+    if (lang === 'it') return src;
+    const core = src.trim();
+    if (!core) return src;
+    const out = DICT[lang][core];
+    if (out === undefined) return src;
+    return src.slice(0, src.indexOf(core)) + out + src.slice(src.indexOf(core) + core.length);
+}
+const t = translateStr;
+
+const I18N_ATTRS = ['placeholder', 'aria-label', 'title', 'alt'];
+const textRec = new WeakMap();
+const attrRec = new WeakMap();
+
+function syncText(n) {
+    const v = n.nodeValue;
+    const rec = textRec.get(n);
+    const src = rec && v === rec.out ? rec.src : v;
+    const out = translateStr(src);
+    textRec.set(n, { src, out });
+    if (out !== v) n.nodeValue = out;
+}
+function syncAttrs(el) {
+    let recs = attrRec.get(el);
+    if (!recs) { recs = {}; attrRec.set(el, recs); }
+    I18N_ATTRS.forEach(a => {
+        if (!el.hasAttribute(a)) return;
+        const v = el.getAttribute(a);
+        const rec = recs[a];
+        const src = rec && v === rec.out ? rec.src : v;
+        const out = translateStr(src);
+        recs[a] = { src, out };
+        if (out !== v) el.setAttribute(a, out);
+    });
+}
+function walkI18n(node) {
+    if (node.nodeType === 3) { syncText(node); return; }
+    if (node.nodeType !== 1 || node.tagName === 'SCRIPT' || node.tagName === 'STYLE') return;
+    syncAttrs(node);
+    node.childNodes.forEach(walkI18n);
+}
+new MutationObserver(muts => {
+    muts.forEach(m => {
+        if (m.type === 'childList') m.addedNodes.forEach(walkI18n);
+        else if (m.type === 'characterData') syncText(m.target);
+        else if (m.type === 'attributes') syncAttrs(m.target);
+    });
+}).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: I18N_ATTRS });
+
+const TITLE_IT = document.title;
+const DESC_IT = document.querySelector('meta[name="description"]').content;
+
+function setLang(l, persist) {
+    if (!DICT[l] && l !== 'it') l = 'it';
+    lang = l;
+    document.documentElement.lang = l;
+    setRadio('lang', l);
+    document.title = translateStr(TITLE_IT);
+    document.querySelector('meta[name="description"]').content = translateStr(DESC_IT);
+    walkI18n(document.body);
+    if (persist) { try { localStorage.setItem('qrLang', l); } catch (e) {} }
+    if (typeof generateQR === 'function' && window.__qrReady) generateQR();
+}
+
+document.querySelectorAll('input[name="lang"]').forEach(r => r.addEventListener('change', () => setLang(r.value, true)));
+
+/* =========================================================
    Tema
    ========================================================= */
 function setTheme(theme) {
@@ -883,26 +968,26 @@ function buildColorField(p) {
     <div class="cf" data-prefix="${p}">
         <div class="cf-head">
             <b>${d.title}</b>
-            <div class="seg" role="radiogroup" aria-label="Tipo colore ${d.title}">
+            <div class="seg" role="radiogroup" aria-label="${d.title}">
                 <label><input type="radio" name="${p}ColorType" value="solid" checked><span>Solido</span></label>
                 <label><input type="radio" name="${p}ColorType" value="gradient"><span>Gradiente</span></label>
             </div>
         </div>
-        <div class="cf-solid"><input type="color" id="${p}Color" value="${d.c}" aria-label="Colore ${d.title}"></div>
+        <div class="cf-solid"><input type="color" id="${p}Color" value="${d.c}" aria-label="${d.title}"></div>
         <div class="cf-grad" hidden>
             <div class="cf-grad-row">
-                <select id="${p}GradientType" aria-label="Tipo di gradiente ${d.title}">
+                <select id="${p}GradientType" aria-label="${d.title}">
                     <option value="linear">Lineare</option>
                     <option value="radial">Radiale</option>
                 </select>
             </div>
             <div class="cf-colors">
-                <input type="color" id="${p}Color1" value="${d.c1}" aria-label="Primo colore ${d.title}">
-                <input type="color" id="${p}Color2" value="${d.c2}" aria-label="Secondo colore ${d.title}">
+                <input type="color" id="${p}Color1" value="${d.c1}" aria-label="${d.title}">
+                <input type="color" id="${p}Color2" value="${d.c2}" aria-label="${d.title}">
             </div>
             <div class="rot" id="${p}LinearOptions">
                 <span>Rotazione</span>
-                <input type="range" id="${p}Rotation" min="0" max="360" step="15" value="0" aria-label="Rotazione ${d.title}">
+                <input type="range" id="${p}Rotation" min="0" max="360" step="15" value="0" aria-label="Rotazione">
                 <output id="${p}RotationValue">0°</output>
             </div>
         </div>
@@ -1040,7 +1125,7 @@ function renderPresets() {
             del.textContent = '×';
             del.title = 'Elimina template';
             del.setAttribute('role', 'button');
-            del.setAttribute('aria-label', 'Elimina template ' + key);
+            del.setAttribute('aria-label', 'Elimina template');
             del.addEventListener('click', ev => { ev.stopPropagation(); deletePreset(key); });
             b.appendChild(del);
         }
@@ -1089,7 +1174,7 @@ function applyPreset(key) {
 }
 
 function savePreset() {
-    const name = (prompt('Dai un nome al tuo template:') || '').trim().slice(0, 24);
+    const name = (prompt(t('Dai un nome al tuo template:')) || '').trim().slice(0, 24);
     if (!name) return;
     if (BUILTIN.includes(name) || name === '__proto__' || name === 'constructor') { toast('Nome riservato: scegline un altro'); return; }
     const st = captureState();
@@ -1456,7 +1541,7 @@ function download() {
     if (!qrCode) { toast('Compila prima i campi richiesti'); return; }
     const ext = radioVal('dlFormat');
     qrCode.download({ name: fileName(), extension: ext });
-    toast('Download avviato (' + ext.toUpperCase() + ')');
+    toast(t('Download avviato') + ' (' + ext.toUpperCase() + ')');
 }
 
 async function copyQR() {
@@ -1543,7 +1628,7 @@ $('logoSize').addEventListener('input', () => { $('logoSizeValue').textContent =
 $('logoMargin').addEventListener('input', () => { $('logoMarginValue').textContent = $('logoMargin').value; });
 
 $('resetBtn').addEventListener('click', () => {
-    if (!confirm('Ripristinare tutte le impostazioni di stile?')) return;
+    if (!confirm(t('Ripristinare tutte le impostazioni di stile?'))) return;
     removeLogo();
     $('qrSizeRange').value = 600; syncSize();
     $('qrMargin').value = 10; $('qrMarginValue').textContent = '10';
@@ -1585,8 +1670,14 @@ document.querySelector('.panel').addEventListener('change', e => {
 });
 
 /* Avvio */
-window.addEventListener('DOMContentLoaded', () => { syncSize(); generateQR(); });
-if (document.readyState !== 'loading') { syncSize(); generateQR(); }
+function initLang() {
+    let saved = null;
+    try { saved = localStorage.getItem('qrLang'); } catch (e) {}
+    const nav = (navigator.language || 'it').slice(0, 2).toLowerCase();
+    setLang(saved || (['it', 'es'].includes(nav) ? nav : 'en'), false);
+}
+
+window.addEventListener('DOMContentLoaded', () => { syncSize(); initLang(); window.__qrReady = true; generateQR(); });
 
 })();
 </script>
