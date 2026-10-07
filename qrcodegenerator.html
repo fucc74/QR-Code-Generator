@@ -1,8 +1,10 @@
+<!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generatore QR Code Professionale</title>
+    <meta name="description" content="Crea QR Code personalizzati gratis: colori, gradienti, logo, Wi-Fi, vCard, eventi e molto altro.">
     <script src="qr-code-styling.js"></script>
 <style>
         * {
@@ -272,6 +274,52 @@
             gap: 10px;
         }
         
+        .qr-error {
+            display: none;
+            margin-bottom: 12px;
+            padding: 10px 14px;
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            border-radius: 8px;
+            color: #c53030;
+            font-size: 0.9em;
+            text-align: center;
+            max-width: 100%;
+        }
+
+        .qr-warning {
+            display: none;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: #fffaf0;
+            border: 1px solid #fbd38d;
+            border-radius: 8px;
+            color: #975a16;
+            font-size: 0.85em;
+        }
+
+        #cookieBanner {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: #2d3748;
+            color: white;
+            padding: 14px 20px;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            font-size: 0.9em;
+        }
+
+        #cookieBanner button {
+            padding: 8px 16px;
+            flex: none;
+        }
+
         /* RESPONSIVE MOBILE */
         @media (max-width: 968px) {
             body {
@@ -597,6 +645,22 @@
 
 
 
+<!-- App Store -->
+<div id="type-appstore" class="type-section" style="display: none;">
+    <div class="form-group">
+        <label for="appPlatform">📱 Piattaforma</label>
+        <select id="appPlatform">
+            <option value="ios">iOS (App Store)</option>
+            <option value="android">Android (Google Play)</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="appId">🆔 ID App</label>
+        <input type="text" id="appId" placeholder="123456789 oppure com.esempio.app">
+        <small>iOS: solo il numero dopo "id" • Android: il package name</small>
+    </div>
+</div>
+
 <!-- Instagram -->
 <div id="type-instagram" class="type-section" style="display: none;">
     <div class="form-group">
@@ -837,9 +901,9 @@
 <div class="form-group" id="logoSettings" style="display: none;">
     <label>⚙️ Impostazioni Logo</label>
     <div class="form-group">
-        <label for="logoSize">Dimensione Logo (0.1 - 0.5)</label>
-        <input type="range" id="logoSize" min="0.1" max="0.5" step="0.05" value="0.4">
-        <span id="logoSizeValue">0.4</span>
+        <label for="logoSize">Dimensione Logo (0.1 - 0.5, consigliato ≤ 0.3)</label>
+        <input type="range" id="logoSize" min="0.1" max="0.5" step="0.05" value="0.3">
+        <span id="logoSizeValue">0.3</span>
     </div>
     <div class="form-group">
         <label for="logoMargin">Margine Logo</label>
@@ -876,8 +940,8 @@
                 <div class="form-group">
                     <label>📐 Dimensioni (px)</label>
                     <div class="size-group">
-                        <input type="number" id="qrSize" value="400" min="100" max="2000" step="50">
-                        <input type="number" id="qrMargin" value="10" min="0" max="100" placeholder="Margine">
+                        <input type="number" id="qrSize" value="400" min="100" max="2000" step="50" aria-label="Dimensione in pixel">
+                        <input type="number" id="qrMargin" value="10" min="0" max="100" placeholder="Margine" aria-label="Margine in pixel">
                     </div>
                 </div>
 <div class="form-group">
@@ -889,33 +953,31 @@
         <option value="H">H - Molto Alto (30%) - Per loghi grandi</option>
     </select>
     <small>Più alto = più robusto con loghi grandi, ma QR più denso</small>
+    <div id="qrWarning" class="qr-warning" role="status"></div>
 </div>                
                 <button class="btn-primary" onclick="generateQR()">Genera QR Code</button>
             </div>
             
             <div class="preview">
+                <div id="qrError" class="qr-error" role="alert"></div>
                 <div id="canvas"></div>
                 <div class="buttons">
                     <button class="btn-secondary" onclick="downloadQR('png')">📥 PNG</button>
                     <button class="btn-tertiary" onclick="downloadQR('svg')">📥 SVG</button>
+                    <button class="btn-copy" onclick="copyQR()">📋 Copia</button>
 
                 </div>
                    <!-- Contenitore AdSense -->
     <div class="adsense-container">
         <p style="font-size: 0.75em; color: #999; margin-bottom: 10px; text-align: center;">Pubblicità</p>
         <!-- Incolla qui il tuo codice AdSense -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0264748655748684"
-     crossorigin="anonymous"></script>
-<!-- qrcode -->
 <ins class="adsbygoogle"
      style="display:block"
      data-ad-client="ca-pub-0264748655748684"
      data-ad-slot="6373605415"
      data-ad-format="auto"
      data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>    
+    
      <!-- fine codice AdSense -->
     </div>
                 
@@ -925,6 +987,7 @@
 
 <script>
     let qrCode;
+    let applyingPreset = false;
     let logoImage = null;
     
     // Genera QR al caricamento
@@ -998,169 +1061,234 @@ function toggleBackground() {
     
     // Rigenera automaticamente quando cambi i parametri
     document.querySelectorAll('input, select, textarea').forEach(element => {
-        if (element.id !== 'qrType' && element.type !== 'file') {
-            element.addEventListener('change', generateQR);
-            element.addEventListener('input', debounce(generateQR, 500));
+        if (element.id !== 'qrType' && element.id !== 'presetSelect' && element.type !== 'file') {
+            const markCustom = () => {
+                if (!applyingPreset) document.getElementById('presetSelect').value = '';
+            };
+            element.addEventListener('change', () => { markCustom(); generateQR(); });
+            element.addEventListener('input', debounce(() => { markCustom(); generateQR(); }, 500));
         }
     });
     
+    const val = id => document.getElementById(id).value.trim();
+
+    function requireField(value, message) {
+        if (!value) throw new Error(message);
+        return value;
+    }
+
+    // Escape per WIFI: (ISO/Zxing) e per testo vCard/iCal
+    const escWifi = str => str.replace(/([\;,:"])/g, '\\$1');
+    const escIcs = str => str.replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/([;,])/g, '\\$1');
+    const cleanUser = str => encodeURIComponent(str.replace(/^@+/, '').replace(/^https?:\/\/[^/]+\/@?/i, '').replace(/\/+$/, ''));
+
     function getQRContent() {
         const type = document.getElementById('qrType').value;
-        
-        switch(type) {
-            case 'url':
-                return document.getElementById('url').value || 'https://example.com';
-                
+
+        switch (type) {
+            case 'url': {
+                let url = requireField(val('url'), 'Inserisci un URL.');
+                if (!/^[a-z][a-z0-9+.-]*:/i.test(url)) url = 'https://' + url;
+                return url;
+            }
+
             case 'text':
-                return document.getElementById('text').value || 'Testo di esempio';
-                
-            case 'email':
-                const email = document.getElementById('email').value;
-                const subject = document.getElementById('emailSubject').value;
-                const body = document.getElementById('emailBody').value;
-                let mailto = `mailto:${email}`;
+                return requireField(document.getElementById('text').value, 'Inserisci il testo.');
+
+            case 'email': {
+                const email = requireField(val('email'), 'Inserisci un indirizzo email.');
                 const params = [];
-                if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
-                if (body) params.push(`body=${encodeURIComponent(body)}`);
-                if (params.length > 0) mailto += '?' + params.join('&');
-                return mailto;
-                
+                if (val('emailSubject')) params.push(`subject=${encodeURIComponent(val('emailSubject'))}`);
+                if (val('emailBody')) params.push(`body=${encodeURIComponent(val('emailBody'))}`);
+                return `mailto:${email}` + (params.length ? '?' + params.join('&') : '');
+            }
+
             case 'phone':
-                return `tel:${document.getElementById('phone').value}`;
-                
-            case 'sms':
-                const smsPhone = document.getElementById('smsPhone').value;
-                const smsMessage = document.getElementById('smsMessage').value;
+                return 'tel:' + requireField(val('phone').replace(/[^\d+]/g, ''), 'Inserisci un numero di telefono.');
+
+            case 'sms': {
+                const smsPhone = requireField(val('smsPhone').replace(/[^\d+]/g, ''), 'Inserisci un numero di telefono.');
+                const smsMessage = val('smsMessage');
                 return `sms:${smsPhone}${smsMessage ? '?body=' + encodeURIComponent(smsMessage) : ''}`;
-                
-            case 'whatsapp':
-                const waPhone = document.getElementById('waPhone').value.replace(/[^0-9]/g, '');
-                const waMessage = document.getElementById('waMessage').value;
+            }
+
+            case 'whatsapp': {
+                const waPhone = requireField(val('waPhone').replace(/\D/g, '').replace(/^00/, ''), 'Inserisci un numero WhatsApp.');
+                const waMessage = val('waMessage');
                 return `https://wa.me/${waPhone}${waMessage ? '?text=' + encodeURIComponent(waMessage) : ''}`;
-                
-            case 'wifi':
-                const ssid = document.getElementById('wifiSSID').value;
+            }
+
+            case 'wifi': {
+                const ssid = requireField(document.getElementById('wifiSSID').value, 'Inserisci il nome della rete (SSID).');
                 const password = document.getElementById('wifiPassword').value;
                 const encryption = document.getElementById('wifiEncryption').value;
                 const hidden = document.getElementById('wifiHidden').checked;
-                return `WIFI:T:${encryption};S:${ssid};P:${password};H:${hidden ? 'true' : 'false'};;`;
-                
-            case 'vcard':
-                const name = document.getElementById('vcardName').value;
-                const org = document.getElementById('vcardOrg').value;
-                const title = document.getElementById('vcardTitle').value;
-                const phone = document.getElementById('vcardPhone').value;
-                const vcardEmail = document.getElementById('vcardEmail').value;
-                const website = document.getElementById('vcardWebsite').value;
-                const address = document.getElementById('vcardAddress').value;
-                
-                let vcard = 'BEGIN:VCARD\n';
-                vcard += 'VERSION:3.0\n';
-                vcard += `FN:${name}\n`;
-                if (org) vcard += `ORG:${org}\n`;
-                if (title) vcard += `TITLE:${title}\n`;
-                if (phone) vcard += `TEL:${phone}\n`;
-                if (vcardEmail) vcard += `EMAIL:${vcardEmail}\n`;
-                if (website) vcard += `URL:${website}\n`;
-                if (address) vcard += `ADR:;;${address}\n`;
-                vcard += 'END:VCARD';
-                return vcard;
- case 'event':
-    const eventTitle = document.getElementById('eventTitle').value;
-    const eventLocation = document.getElementById('eventLocation').value;
-    const eventStart = document.getElementById('eventStart').value;
-    const eventEnd = document.getElementById('eventEnd').value;
-    const eventDescription = document.getElementById('eventDescription').value;
-    
-    // Converti in formato iCalendar
-    const formatDate = (dateStr) => {
-        if (!dateStr) return '';
-        const date = new Date(dateStr);
-        return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-    };
-    
-    let ical = 'BEGIN:VCALENDAR\n';
-    ical += 'VERSION:2.0\n';
-    ical += 'BEGIN:VEVENT\n';
-    ical += `SUMMARY:${eventTitle}\n`;
-    if (eventLocation) ical += `LOCATION:${eventLocation}\n`;
-    if (eventStart) ical += `DTSTART:${formatDate(eventStart)}\n`;
-    if (eventEnd) ical += `DTEND:${formatDate(eventEnd)}\n`;
-    if (eventDescription) ical += `DESCRIPTION:${eventDescription}\n`;
-    ical += 'END:VEVENT\n';
-    ical += 'END:VCALENDAR';
-    return ical;
-    
-case 'bitcoin':
-    const btcAddress = document.getElementById('btcAddress').value;
-    const btcAmount = document.getElementById('btcAmount').value;
-    const btcLabel = document.getElementById('btcLabel').value;
-    const btcMessage = document.getElementById('btcMessage').value;
-    
-    let btcUri = `bitcoin:${btcAddress}`;
-    const btcParams = [];
-    if (btcAmount) btcParams.push(`amount=${btcAmount}`);
-    if (btcLabel) btcParams.push(`label=${encodeURIComponent(btcLabel)}`);
-    if (btcMessage) btcParams.push(`message=${encodeURIComponent(btcMessage)}`);
-    if (btcParams.length > 0) btcUri += '?' + btcParams.join('&');
-    return btcUri;
-    
+                let wifi = `WIFI:T:${encryption === 'nopass' ? 'nopass' : encryption};S:${escWifi(ssid)};`;
+                if (encryption !== 'nopass') {
+                    wifi += `P:${escWifi(requireField(password, 'Inserisci la password della rete.'))};`;
+                }
+                if (hidden) wifi += 'H:true;';
+                return wifi + ';';
+            }
 
-    
+            case 'vcard': {
+                const name = requireField(val('vcardName'), 'Inserisci il nome completo.');
+                const parts = name.split(/\s+/);
+                const family = parts.length > 1 ? parts.pop() : '';
+                const given = parts.join(' ');
+                const lines = [
+                    'BEGIN:VCARD',
+                    'VERSION:3.0',
+                    `N:${escIcs(family)};${escIcs(given)};;;`,
+                    `FN:${escIcs(name)}`
+                ];
+                if (val('vcardOrg')) lines.push(`ORG:${escIcs(val('vcardOrg'))}`);
+                if (val('vcardTitle')) lines.push(`TITLE:${escIcs(val('vcardTitle'))}`);
+                if (val('vcardPhone')) lines.push(`TEL:${val('vcardPhone')}`);
+                if (val('vcardEmail')) lines.push(`EMAIL:${val('vcardEmail')}`);
+                if (val('vcardWebsite')) lines.push(`URL:${val('vcardWebsite')}`);
+                if (val('vcardAddress')) lines.push(`ADR:;;${escIcs(val('vcardAddress'))};;;;`);
+                lines.push('END:VCARD');
+                return lines.join('\r\n');
+            }
 
-    
-case 'appstore':
-    const appPlatform = document.getElementById('appPlatform').value;
-    const appId = document.getElementById('appId').value;
-    
-    if (appPlatform === 'ios') {
-        return `https://apps.apple.com/app/id${appId}`;
-    } else {
-        return `https://play.google.com/store/apps/details?id=${appId}`;
-    }
-    
-case 'instagram':
-    const igUsername = document.getElementById('igUsername').value.replace('@', '');
-    return `https://instagram.com/${igUsername}`;
-    
-case 'tiktok':
-    const tiktokUsername = document.getElementById('tiktokUsername').value.replace('@', '');
-    return `https://tiktok.com/@${tiktokUsername}`;
-    
-case 'linkedin':
-    const linkedinType = document.getElementById('linkedinType').value;
-    const linkedinUrl = document.getElementById('linkedinUrl').value;
-    
-    if (linkedinType === 'profile') {
-        return `https://linkedin.com/in/${linkedinUrl}`;
-    } else {
-        return `https://linkedin.com/company/${linkedinUrl}`;
-    }
-    
-case 'twitter':
-    const twitterUsername = document.getElementById('twitterUsername').value.replace('@', '');
-    return `https://twitter.com/${twitterUsername}`;
-    
-case 'gps':
-    const gpsLat = document.getElementById('gpsLat').value;
-    const gpsLng = document.getElementById('gpsLng').value;
-    const gpsLabel = document.getElementById('gpsLabel').value;
-    
-    // Formato geo URI
-    let geoUri = `geo:${gpsLat},${gpsLng}`;
-    if (gpsLabel) geoUri += `?q=${gpsLat},${gpsLng}(${encodeURIComponent(gpsLabel)})`;
-    return geoUri;               
+            case 'event': {
+                const eventTitle = requireField(val('eventTitle'), 'Inserisci il titolo dell\'evento.');
+                const eventStart = requireField(val('eventStart'), 'Inserisci data e ora di inizio.');
+                const eventEnd = val('eventEnd');
+
+                // Converti in formato iCalendar (UTC)
+                const formatDate = (dateStr) => {
+                    const date = new Date(dateStr);
+                    if (isNaN(date.getTime())) throw new Error('Data evento non valida.');
+                    return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+                };
+
+                if (eventEnd && new Date(eventEnd) < new Date(eventStart)) {
+                    throw new Error('La fine dell\'evento è precedente all\'inizio.');
+                }
+
+                const lines = [
+                    'BEGIN:VCALENDAR',
+                    'VERSION:2.0',
+                    'PRODID:-//GIF Web Solutions//QR Code Generator//IT',
+                    'BEGIN:VEVENT',
+                    `UID:${Date.now()}@qrcode-generator`,
+                    `DTSTAMP:${formatDate(new Date())}`,
+                    `SUMMARY:${escIcs(eventTitle)}`,
+                    `DTSTART:${formatDate(eventStart)}`
+                ];
+                if (eventEnd) lines.push(`DTEND:${formatDate(eventEnd)}`);
+                if (val('eventLocation')) lines.push(`LOCATION:${escIcs(val('eventLocation'))}`);
+                if (val('eventDescription')) lines.push(`DESCRIPTION:${escIcs(val('eventDescription'))}`);
+                lines.push('END:VEVENT', 'END:VCALENDAR');
+                return lines.join('\r\n');
+            }
+
+            case 'bitcoin': {
+                const btcAddress = requireField(val('btcAddress'), 'Inserisci un indirizzo Bitcoin.');
+                if (!/^(bc1[a-z0-9]{11,87}|[13][a-km-zA-HJ-NP-Z1-9]{25,34}|tb1[a-z0-9]{11,87}|[mn2][a-km-zA-HJ-NP-Z1-9]{25,34})$/.test(btcAddress)) {
+                    throw new Error('Indirizzo Bitcoin non valido.');
+                }
+                const btcAmount = val('btcAmount');
+                const params = [];
+                if (btcAmount) {
+                    if (!(parseFloat(btcAmount) > 0)) throw new Error('L\'importo deve essere maggiore di zero.');
+                    params.push(`amount=${btcAmount}`);
+                }
+                if (val('btcLabel')) params.push(`label=${encodeURIComponent(val('btcLabel'))}`);
+                if (val('btcMessage')) params.push(`message=${encodeURIComponent(val('btcMessage'))}`);
+                return `bitcoin:${btcAddress}` + (params.length ? '?' + params.join('&') : '');
+            }
+
+            case 'appstore': {
+                const appPlatform = document.getElementById('appPlatform').value;
+                const appId = requireField(val('appId').replace(/^id/i, ''), 'Inserisci l\'ID dell\'app.');
+                if (appPlatform === 'ios') {
+                    if (!/^\d+$/.test(appId)) throw new Error('L\'ID iOS deve essere numerico.');
+                    return `https://apps.apple.com/app/id${appId}`;
+                }
+                return `https://play.google.com/store/apps/details?id=${encodeURIComponent(appId)}`;
+            }
+
+            case 'instagram':
+                return `https://instagram.com/${requireField(cleanUser(val('igUsername')), 'Inserisci lo username Instagram.')}`;
+
+            case 'tiktok':
+                return `https://tiktok.com/@${requireField(cleanUser(val('tiktokUsername')), 'Inserisci lo username TikTok.')}`;
+
+            case 'linkedin': {
+                const slug = requireField(
+                    val('linkedinUrl').replace(/^https?:\/\/(www\.)?linkedin\.com\/(in|company)\//i, '').replace(/\/+$/, ''),
+                    'Inserisci l\'identificativo LinkedIn.'
+                );
+                const kind = document.getElementById('linkedinType').value === 'profile' ? 'in' : 'company';
+                return `https://linkedin.com/${kind}/${encodeURIComponent(slug)}`;
+            }
+
+            case 'twitter':
+                return `https://x.com/${requireField(cleanUser(val('twitterUsername')), 'Inserisci lo username Twitter/X.')}`;
+
+            case 'gps': {
+                const lat = parseFloat(val('gpsLat').replace(',', '.'));
+                const lng = parseFloat(val('gpsLng').replace(',', '.'));
+                if (isNaN(lat) || lat < -90 || lat > 90) throw new Error('Latitudine non valida (da -90 a 90).');
+                if (isNaN(lng) || lng < -180 || lng > 180) throw new Error('Longitudine non valida (da -180 a 180).');
+                const gpsLabel = val('gpsLabel');
+                let geoUri = `geo:${lat},${lng}`;
+                if (gpsLabel) geoUri += `?q=${lat},${lng}(${encodeURIComponent(gpsLabel)})`;
+                return geoUri;
+            }
+
             default:
-                return 'https://example.com';
+                throw new Error('Tipo di QR Code non supportato.');
         }
     }
     
+function showError(message) {
+    const box = document.getElementById('qrError');
+    box.textContent = message || '';
+    box.style.display = message ? 'block' : 'none';
+}
+
+let qrScheduled = false;
 function generateQR() {
+    if (qrScheduled) return;
+    qrScheduled = true;
+    Promise.resolve().then(() => {
+        qrScheduled = false;
+        generateQRNow();
+    });
+}
+
+function generateQRNow() {
+    try {
+        renderQR();
+        showError('');
+    } catch (err) {
+        document.getElementById('canvas').innerHTML = '';
+        qrCode = null;
+        showError(err && err.message ? err.message : 'Impossibile generare il QR Code.');
+    }
+}
+
+function readInt(id, min, max, fallback) {
+    const n = parseInt(document.getElementById(id).value, 10);
+    return isNaN(n) ? fallback : Math.min(max, Math.max(min, n));
+}
+
+function renderQR() {
+    if (typeof QRCodeStyling === 'undefined') {
+        throw new Error('Libreria qr-code-styling.js non caricata.');
+    }
     const text = getQRContent();
+    if (new TextEncoder().encode(text).length > 2900) {
+        throw new Error('Contenuto troppo lungo per un QR Code. Riduci il testo.');
+    }
     const dotsType = document.getElementById('dotsType').value;
     const cornersType = document.getElementById('cornersType').value;
-    const size = parseInt(document.getElementById('qrSize').value);
-    const margin = parseInt(document.getElementById('qrMargin').value);
+    const size = readInt('qrSize', 100, 2000, 400);
+    const margin = readInt('qrMargin', 0, 100, 10);
     const transparentBg = document.getElementById('transparentBg').checked;
     const errorLevel = document.getElementById('errorLevel').value;
     
@@ -1322,6 +1450,37 @@ function generateQR() {
     
     qrCode = new QRCodeStyling(qrOptions);
     qrCode.append(document.getElementById("canvas"));
+    updateWarning(dotsColorType, transparentBg, errorLevel);
+}
+
+// Avvisi di scansionabilità
+function luminance(hex) {
+    const m = /^#?([0-9a-f]{6})$/i.exec(hex);
+    if (!m) return null;
+    const c = [0, 2, 4].map(i => {
+        const v = parseInt(m[1].substr(i, 2), 16) / 255;
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+}
+
+function updateWarning(dotsColorType, transparentBg, errorLevel) {
+    const msgs = [];
+    const dots = luminance(document.getElementById(dotsColorType === 'solid' ? 'dotsColor' : 'dotsColor1').value);
+    const bgSolid = document.querySelector('input[name="bgColorType"]:checked').value === 'solid';
+    const bg = luminance(document.getElementById(bgSolid ? 'bgColor' : 'bgColor1').value);
+    if (!transparentBg && dots !== null && bg !== null) {
+        if (dots > bg) msgs.push('I punti sono più chiari dello sfondo (QR invertito): molti lettori non lo scansionano.');
+        else if ((bg + 0.05) / (dots + 0.05) < 3) msgs.push('Contrasto basso tra punti e sfondo: il QR potrebbe non essere leggibile.');
+    }
+    if (transparentBg) msgs.push('Sfondo trasparente: assicurati che il QR sia posto su uno sfondo chiaro.');
+    if (logoImage && (errorLevel === 'L' || errorLevel === 'M' ||
+        parseFloat(document.getElementById('logoSize').value) > 0.3)) {
+        msgs.push('Con un logo usa correzione errori Q/H e dimensione logo ≤ 0.3.');
+    }
+    const box = document.getElementById('qrWarning');
+    box.textContent = msgs.join(' ');
+    box.style.display = msgs.length ? 'block' : 'none';
 }
 
     
@@ -1335,6 +1494,17 @@ function generateQR() {
         }
     }
     
+    async function copyQR() {
+        if (!qrCode) return;
+        try {
+            const blob = await qrCode.getRawData('png');
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+            alert('QR Code copiato negli appunti!');
+        } catch (e) {
+            alert('Copia non supportata da questo browser: usa il download PNG.');
+        }
+    }
+
     // Funzione debounce per evitare troppi aggiornamenti
     function debounce(func, wait) {
         let timeout;
@@ -1522,63 +1692,107 @@ document.getElementById('cornersDotGradientType').addEventListener('change', fun
 // Apply preset
 function applyPreset() {
     const presetName = document.getElementById('presetSelect').value;
-    if (!presetName) return;
-    
+    if (!presetName || !presets[presetName]) return;
+
     const preset = presets[presetName];
-    
-    // Dots color type
-    document.querySelector(`input[name="dotsColorType"][value="${preset.dotsColorType}"]`).checked = true;
-    toggleGradient('dots');
-    
-    if (preset.dotsColorType === 'solid') {
-        document.getElementById('dotsColor').value = preset.dotsColor;
-    } else {
-        document.getElementById('dotsGradientType').value = preset.dotsGradientType;
-        document.getElementById('dotsColor1').value = preset.dotsColor1;
-        document.getElementById('dotsColor2').value = preset.dotsColor2;
-        if (preset.dotsRotation) {
-            document.getElementById('dotsRotation').value = preset.dotsRotation;
-            document.getElementById('dotsRotationValue').textContent = preset.dotsRotation + '°';
+    applyingPreset = true;
+    try {
+        // Reset opzioni non gestite dai preset built-in
+        document.getElementById('transparentBg').checked = false;
+        document.getElementById('bgColor').disabled = false;
+        document.getElementById('bgColor').style.opacity = '1';
+
+        // Dots color type
+        document.querySelector(`input[name="dotsColorType"][value="${preset.dotsColorType}"]`).checked = true;
+        toggleGradient('dots');
+
+        if (preset.dotsColorType === 'solid') {
+            document.getElementById('dotsColor').value = preset.dotsColor;
+        } else {
+            document.getElementById('dotsGradientType').value = preset.dotsGradientType;
+            document.getElementById('dotsColor1').value = preset.dotsColor1;
+            document.getElementById('dotsColor2').value = preset.dotsColor2;
+            const rot = preset.dotsRotation || 0;
+            document.getElementById('dotsRotation').value = rot;
+            document.getElementById('dotsRotationValue').textContent = rot + '°';
+            document.getElementById('dotsGradientType').dispatchEvent(new Event('change'));
         }
-        document.getElementById('dotsGradientType').dispatchEvent(new Event('change'));
-    }
-    
-    // Background color type
-    document.querySelector(`input[name="bgColorType"][value="${preset.bgColorType}"]`).checked = true;
-    toggleGradient('bg');
-    
-    if (preset.bgColorType === 'solid') {
-        document.getElementById('bgColor').value = preset.bgColor;
-    } else {
-        document.getElementById('bgGradientType').value = preset.bgGradientType;
-        document.getElementById('bgColor1').value = preset.bgColor1;
-        document.getElementById('bgColor2').value = preset.bgColor2;
-        if (preset.bgRotation) {
-            document.getElementById('bgRotation').value = preset.bgRotation;
-            document.getElementById('bgRotationValue').textContent = preset.bgRotation + '°';
+
+        // Background color type
+        document.querySelector(`input[name="bgColorType"][value="${preset.bgColorType}"]`).checked = true;
+        toggleGradient('bg');
+
+        if (preset.bgColorType === 'solid') {
+            document.getElementById('bgColor').value = preset.bgColor;
+        } else {
+            document.getElementById('bgGradientType').value = preset.bgGradientType;
+            document.getElementById('bgColor1').value = preset.bgColor1;
+            document.getElementById('bgColor2').value = preset.bgColor2;
+            const rot = preset.bgRotation || 0;
+            document.getElementById('bgRotation').value = rot;
+            document.getElementById('bgRotationValue').textContent = rot + '°';
+            document.getElementById('bgGradientType').dispatchEvent(new Event('change'));
         }
-        document.getElementById('bgGradientType').dispatchEvent(new Event('change'));
+
+        // Styles
+        document.getElementById('dotsType').value = preset.dotsType;
+        document.getElementById('cornersType').value = preset.cornersType;
+
+        // Colori angoli (solo preset salvati dall'utente)
+        const custom = !!preset.customCorners;
+        document.getElementById('customCornersColor').checked = custom;
+        document.getElementById('cornersColorSection').style.display = custom ? 'block' : 'none';
+        if (custom) {
+            document.getElementById('cornersSquareColor').value = preset.cornersSquareColor;
+            document.getElementById('cornersDotColor').value = preset.cornersDotColor;
+        }
+    } finally {
+        applyingPreset = false;
     }
-    
-    // Styles
-    document.getElementById('dotsType').value = preset.dotsType;
-    document.getElementById('cornersType').value = preset.cornersType;
-    
+
     generateQR();
 }
 
+// localStorage sicuro (può essere bloccato o corrotto)
+function loadSavedPresets() {
+    try {
+        const data = JSON.parse(localStorage.getItem('qrPresets') || '{}');
+        return data && typeof data === 'object' && !Array.isArray(data) ? data : {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function addPresetOption(name) {
+    const select = document.getElementById('presetSelect');
+    if (Array.from(select.options).some(o => o.value === name)) return;
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = '⭐ ' + name;
+    select.appendChild(option);
+}
+
+const builtinPresetNames = Object.keys(presets);
+
 // Save custom preset
 function savePreset() {
-    const name = prompt('Inserisci un nome per questo template:');
+    const name = (prompt('Inserisci un nome per questo template:') || '').trim();
     if (!name) return;
-    
+    if (builtinPresetNames.includes(name) || name === '__proto__') {
+        alert('Nome riservato: scegline un altro.');
+        return;
+    }
+
     const customPreset = {
         dotsColorType: document.querySelector('input[name="dotsColorType"]:checked').value,
         bgColorType: document.querySelector('input[name="bgColorType"]:checked').value,
         dotsType: document.getElementById('dotsType').value,
-        cornersType: document.getElementById('cornersType').value
+        cornersType: document.getElementById('cornersType').value,
+        customCorners: document.getElementById('customCornersColor').checked,
+        cornersSquareColor: document.getElementById('cornersSquareColor').value,
+        cornersDotColor: document.getElementById('cornersDotColor').value
     };
-    
+
     if (customPreset.dotsColorType === 'solid') {
         customPreset.dotsColor = document.getElementById('dotsColor').value;
     } else {
@@ -1589,7 +1803,7 @@ function savePreset() {
             customPreset.dotsRotation = parseInt(document.getElementById('dotsRotation').value);
         }
     }
-    
+
     if (customPreset.bgColorType === 'solid') {
         customPreset.bgColor = document.getElementById('bgColor').value;
     } else {
@@ -1600,40 +1814,72 @@ function savePreset() {
             customPreset.bgRotation = parseInt(document.getElementById('bgRotation').value);
         }
     }
-    
-    // Save to localStorage
-    const savedPresets = JSON.parse(localStorage.getItem('qrPresets') || '{}');
-    savedPresets[name] = customPreset;
-    localStorage.setItem('qrPresets', JSON.stringify(savedPresets));
-    
-    // Add to select
-    const option = document.createElement('option');
-    option.value = name;
-    option.textContent = '⭐ ' + name;
-    document.getElementById('presetSelect').appendChild(option);
+
+    presets[name] = customPreset;
+    try {
+        const savedPresets = loadSavedPresets();
+        savedPresets[name] = customPreset;
+        localStorage.setItem('qrPresets', JSON.stringify(savedPresets));
+    } catch (e) {
+        alert('Impossibile salvare in modo permanente (storage non disponibile). Il template vale solo per questa sessione.');
+    }
+
+    addPresetOption(name);
     document.getElementById('presetSelect').value = name;
-    
     alert('Template salvato con successo!');
 }
 
 // Load custom presets on page load
 window.addEventListener('DOMContentLoaded', () => {
-    const savedPresets = JSON.parse(localStorage.getItem('qrPresets') || '{}');
+    const savedPresets = loadSavedPresets();
     Object.keys(savedPresets).forEach(name => {
+        if (builtinPresetNames.includes(name) || !savedPresets[name] || typeof savedPresets[name] !== 'object') return;
         presets[name] = savedPresets[name];
-        const option = document.createElement('option');
-        option.value = name;
-        option.textContent = '⭐ ' + name;
-        document.getElementById('presetSelect').appendChild(option);
+        addPresetOption(name);
     });
-});    
+});
+
+// Consenso cookie e caricamento AdSense (solo dopo l'accettazione)
+function loadAds() {
+    if (window.__adsLoaded) return;
+    window.__adsLoaded = true;
+    const script = document.createElement('script');
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0264748655748684';
+    script.onload = () => {
+        try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+    };
+    document.head.appendChild(script);
+    document.querySelector('.adsense-container').style.display = '';
+}
+
+function setConsent(accepted) {
+    try { localStorage.setItem('qrAdConsent', accepted ? 'yes' : 'no'); } catch (e) {}
+    document.getElementById('cookieBanner').style.display = 'none';
+    if (accepted) loadAds();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    let consent = null;
+    try { consent = localStorage.getItem('qrAdConsent'); } catch (e) {}
+    if (consent === 'yes') {
+        loadAds();
+    } else {
+        document.querySelector('.adsense-container').style.display = 'none';
+        if (consent !== 'no') document.getElementById('cookieBanner').style.display = 'flex';
+    }
+});
 </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0264748655748684"
-     crossorigin="anonymous"></script>
+<div id="cookieBanner" role="dialog" aria-label="Consenso cookie">
+    <span>Usiamo cookie di terze parti (Google AdSense) per mostrare annunci pubblicitari. Accetti?</span>
+    <button type="button" class="btn-secondary" onclick="setConsent(true)">Accetta</button>
+    <button type="button" class="btn-tertiary" onclick="setConsent(false)">Rifiuta</button>
+</div>
 <footer style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; text-align: center; margin-top: 0;">
     <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
         <p style="margin: 0; font-size: 1em; opacity: 0.95;">
-            Powered by <strong><a href="#" onclick="window.open(atob('aHR0cHM6Ly93d3cuc3RvcmlhZGVsbGFmb3RvZ3JhZmlhLmNvbQ=='), '_blank'); return false;" style="color: white; text-decoration: none; border-bottom: 2px solid rgba(255,255,255,0.5); transition: border-color 0.3s; cursor: pointer;">GIF Web Solutions</a></strong>
+            Powered by <strong><a href="https://www.storiadellafotografia.com" target="_blank" rel="noopener" style="color: white; text-decoration: none; border-bottom: 2px solid rgba(255,255,255,0.5);">GIF Web Solutions</a></strong>
         </p>
         <p style="margin: 10px 0 0 0; font-size: 0.85em; opacity: 0.8;">
             Strumenti web professionali • QR Code Generator © 2026
